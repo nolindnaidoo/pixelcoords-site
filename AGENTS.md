@@ -140,8 +140,14 @@ e2e/            Playwright specs (*.e2e.ts) + page a11y
 ## Verification — the definition of done
 
 CI (`.github/workflows/ci.yml`) enforces the full chain on every push and
-PR: lint, typecheck, unit/component tests, static build, the Playwright
-e2e/a11y suite, and warn-level Lighthouse budgets (`lighthouserc.json`).
+PR: lint, typecheck, unit/component tests, static build, the client-JS
+budget (`scripts/check-bundle-budget.ts` — raising it needs a written
+reason), the Playwright e2e/a11y suite including visual-regression
+snapshots (platform-suffixed baselines: macOS generated locally, Linux
+generated on the CI runner; the video is masked), and warn-level
+Lighthouse budgets (`lighthouserc.json`). The mono font ships as a
+latin-subset woff2 (`app/fonts.ts`); the full TTF stays only for OG
+cards.
 Security and cache headers live in `vercel.json` (full CSP is deliberately
 absent — Next's inline scripts would force unsafe-inline; frame-ancestors
 plus the header set covers the static-site risk surface). Run locally:

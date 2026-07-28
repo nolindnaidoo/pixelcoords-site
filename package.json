@@ -29,7 +29,8 @@
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "verify": "bun run lint && bun run typecheck && bun run test && bun run build",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun",
+    "budget": "bun scripts/check-bundle-budget.ts"
   },
   "dependencies": {
     "@heroui/react": "^3.2.2",

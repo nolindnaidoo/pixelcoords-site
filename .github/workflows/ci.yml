@@ -8,6 +8,11 @@ on:
 permissions:
   contents: read
 
+# Stacked pushes cancel stale runs — only the newest commit's verdict matters.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -16,15 +21,35 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: .bun-version
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run typecheck
       - run: bun test
       - run: bun run build
+      - run: bun run budget
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - name: Install Playwright browser
         run: bunx playwright install --with-deps chromium
       - name: E2E + a11y (mobile first, both schemes)
         run: bun run e2e
+      # A red e2e uploads its evidence — traces, the HTML report, and the
+      # visual-diff actuals — so failures are debuggable without a local repro.
+      - name: Upload Playwright evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: playwright-evidence
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
       # Budgets are warn-level (non-blocking) per the house posture — the
       # numbers surface in the job log; flip to error once they've held
       # across a few releases. Chrome ships on the runner.

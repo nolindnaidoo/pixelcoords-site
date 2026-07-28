@@ -10,8 +10,11 @@ export const geistSans = Geist({
   subsets: ['latin'],
 })
 
+// The page serves the latin-subset woff2 (37 KB vs the 270 KB full TTF —
+// next/font/local does not subset or convert local files itself). The full
+// TTF stays vendored: lib/og.tsx needs its raw glyph data for OG cards.
 export const jetbrainsMono = localFont({
-  src: './fonts/JetBrainsMono-Regular.ttf',
+  src: './fonts/JetBrainsMono-Regular.subset.woff2',
   variable: '--font-jetbrains-mono',
 })
 
