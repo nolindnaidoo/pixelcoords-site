@@ -133,9 +133,18 @@ test.describe('seo furniture', () => {
   test('robots and sitemap are served and complete', async ({ request }) => {
     const robots = await request.get('/robots.txt')
     expect(robots.status()).toBe(200)
+    expect(await robots.text()).toContain('Allow: /')
     const sitemap = await request.get('/sitemap.xml')
     expect(sitemap.status()).toBe(200)
     const body = await sitemap.text()
     expect(body.match(/<url>/g)?.length).toBe(5)
+  })
+
+  test('manifest, security.txt, and llms.txt are served', async ({ request }) => {
+    const manifest = await request.get('/manifest.webmanifest')
+    expect(manifest.status()).toBe(200)
+    expect((await manifest.json()).name).toBe('pixelcoords')
+    expect((await request.get('/.well-known/security.txt')).status()).toBe(200)
+    expect((await request.get('/llms.txt')).status()).toBe(200)
   })
 })
