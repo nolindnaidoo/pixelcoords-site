@@ -1,5 +1,7 @@
 # pixelcoords-site
 
+[![CI](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml/badge.svg)](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml)
+
 The promo and search site for [pixelcoords](https://github.com/nolindnaidoo/pixelcoords)
 — the freeze-your-screen coordinate tool on
 [crates.io](https://crates.io/crates/pixelcoords).

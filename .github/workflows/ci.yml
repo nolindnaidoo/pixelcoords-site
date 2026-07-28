@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun test
+      - run: bun run build
+      - name: Install Playwright browser
+        run: bunx playwright install --with-deps chromium
+      - name: E2E + a11y (mobile first, both schemes)
+        run: bun run e2e
+      # Budgets are warn-level (non-blocking) per the house posture — the
+      # numbers surface in the job log; flip to error once they've held
+      # across a few releases. Chrome ships on the runner.
+      - name: Lighthouse budgets
+        run: bunx lhci autorun

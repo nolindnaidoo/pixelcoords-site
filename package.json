@@ -13,7 +13,8 @@
     "test": "bun test",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "verify": "bun run lint && bun run typecheck && bun run test && bun run build"
+    "verify": "bun run lint && bun run typecheck && bun run test && bun run build",
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@heroui/react": "^3.2.2",
@@ -30,6 +31,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.6",
     "@happy-dom/global-registrator": "^20.11.1",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",

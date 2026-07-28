@@ -1,0 +1,21 @@
+# Weekly grouped dependency PRs. No auto-merge here: this repo has no
+# required checks (push-to-main IS the deploy flow), so auto-merge would
+# land before CI finishes — updates are low-volume and reviewed by hand.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions:
+        patterns: ["*"]

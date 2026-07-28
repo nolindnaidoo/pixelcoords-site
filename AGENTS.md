@@ -139,6 +139,13 @@ e2e/            Playwright specs (*.e2e.ts) + page a11y
 
 ## Verification — the definition of done
 
+CI (`.github/workflows/ci.yml`) enforces the full chain on every push and
+PR: lint, typecheck, unit/component tests, static build, the Playwright
+e2e/a11y suite, and warn-level Lighthouse budgets (`lighthouserc.json`).
+Security and cache headers live in `vercel.json` (full CSP is deliberately
+absent — Next's inline scripts would force unsafe-inline; frame-ancestors
+plus the header set covers the static-site risk surface). Run locally:
+
 ```bash
 bun run typecheck && bun run lint && bun test && bun run build
 bun run e2e        # serves out/ and runs mobile-first + axe, both schemes
