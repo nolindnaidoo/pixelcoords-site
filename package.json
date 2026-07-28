@@ -2,6 +2,21 @@
   "name": "pixelcoords-site",
   "version": "0.1.0",
   "private": true,
+  "description": "The promo and search site for pixelcoords \u2014 freeze your screen, mark regions, get machine-usable coordinates.",
+  "author": {
+    "name": "Nolin Naidoo",
+    "email": "nolin.naidoo@me.com",
+    "url": "https://github.com/nolindnaidoo"
+  },
+  "license": "MIT",
+  "homepage": "https://pixelcoords.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nolindnaidoo/pixelcoords-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nolindnaidoo/pixelcoords-site/issues"
+  },
   "scripts": {
     "preinstall": "npx only-allow bun",
     "dev": "next dev",
