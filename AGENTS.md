@@ -8,7 +8,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Source of truth for working in this repo. If you change a convention, update
 this file in the same change. `CLAUDE.md` carries the repo-specific honesty
-rules; `README.md` carries the page map and maintenance contract. This file
+rules; `README.md` carries the page map; **`MAINTENANCE.md` is the runbook —
+every recurring ritual (stamp walk, releases, snapshots, deps, fonts) with
+exact commands.** This file
 adapts the house standards from `~/dev/offensiveedge-web/AGENTS.md` — read
 that document when a convention here is terse; the intent is identical.
 
@@ -79,9 +81,16 @@ app/            routes (shims), metadata files, fonts, globals.css
 features/       home/ vs/ how-to/ — a feature owns its components + tests
 components/     bespoke shared UI (selection-frame, coord-chip, comparison-table, …)
 ui/             thin @heroui/react re-exports, one file per primitive, created on first use
-lib/            site.ts (canonical URLs/version) · competitors.ts (quarantine data) · og.tsx · error.ts
-e2e/            Playwright specs (*.e2e.ts) + page a11y
+lib/            pages.ts (THE page registry — sitemap/footer/404/e2e all render from it)
+                site.ts (canonical URLs/version/theme colors) · competitors.ts (quarantine
+                data) · og.tsx · error.ts
+e2e/            Playwright specs (*.e2e.ts) + page a11y — loops read lib/pages.ts
 ```
+
+- **Page-shaped lists are never written twice.** The registry in
+  `lib/pages.ts` feeds the sitemap, footer nav, 404 list, per-page
+  metadata (`pageMetadata`), OG routes, and every e2e loop. A new page is
+  one registry entry plus its route + feature files — see MAINTENANCE.md.
 
 - **Feature code imports HeroUI from `ui/`, never `@heroui/react` directly.**
   Re-exports stay thin; a wrapper may add a project default, never re-shape

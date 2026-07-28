@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { SITE_PAGES } from '@/lib/pages'
 
 // The hardening gates: keyboard, reflow, theme, video motion, 404, SEO
 // furniture. These run alongside the per-page axe specs.
@@ -42,13 +43,7 @@ test.describe('keyboard', () => {
 })
 
 test.describe('reflow at 320px', () => {
-  for (const path of [
-    '/',
-    '/vs/powertoys-screen-ruler',
-    '/vs/pixelsnap',
-    '/vs/sikulix',
-    '/how-to/pixel-coordinates',
-  ]) {
+  for (const { path } of SITE_PAGES) {
     test(`${path} does not overflow the 320px viewport`, async ({ page }) => {
       await page.setViewportSize({ width: 320, height: 800 })
       await page.goto(path)
@@ -112,13 +107,7 @@ test.describe('not found', () => {
 })
 
 test.describe('seo furniture', () => {
-  for (const path of [
-    '/',
-    '/vs/powertoys-screen-ruler',
-    '/vs/pixelsnap',
-    '/vs/sikulix',
-    '/how-to/pixel-coordinates',
-  ]) {
+  for (const { path } of SITE_PAGES) {
     test(`${path} carries one canonical, an og:image, and valid JSON-LD`, async ({ page }) => {
       await page.goto(path)
       expect(await page.locator('link[rel="canonical"]').count()).toBe(1)
@@ -137,7 +126,7 @@ test.describe('seo furniture', () => {
     const sitemap = await request.get('/sitemap.xml')
     expect(sitemap.status()).toBe(200)
     const body = await sitemap.text()
-    expect(body.match(/<url>/g)?.length).toBe(5)
+    expect(body.match(/<url>/g)?.length).toBe(SITE_PAGES.length)
   })
 
   test('manifest, security.txt, and llms.txt are served', async ({ request }) => {

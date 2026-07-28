@@ -1,10 +1,13 @@
 import { OG_SIZE, ogCard } from '@/lib/og'
+import { pageByPath } from '@/lib/pages'
 
 export const dynamic = 'force-static'
 export const size = OG_SIZE
 export const contentType = 'image/png'
 export const alt = 'pixelcoords vs PowerToys Screen Ruler'
 
+const page = pageByPath('/vs/powertoys-screen-ruler')
+
 export default function OpengraphImage() {
-  return ogCard({ kicker: 'comparison', title: 'pixelcoords vs PowerToys Screen Ruler' })
+  return ogCard({ kicker: page.ogKicker, title: page.ogTitle })
 }

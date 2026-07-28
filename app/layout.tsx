@@ -5,7 +5,7 @@ import { fontHtmlClassName } from '@/app/fonts'
 import { Providers } from '@/app/providers'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
-import { SITE_URL, TAGLINE } from '@/lib/site'
+import { SITE_URL, TAGLINE, THEME_COLORS } from '@/lib/site'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: '(prefers-color-scheme: light)', color: THEME_COLORS.light },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLORS.dark },
   ],
 }
 

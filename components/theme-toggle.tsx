@@ -2,6 +2,7 @@
 
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { THEME_COLORS } from '@/lib/site'
 
 // Sun/moon toggle: the site follows the OS until the first click, then the
 // explicit choice persists (next-themes localStorage). The server cannot know
@@ -9,7 +10,6 @@ import { useEffect, useState } from 'react'
 // until mount — same footprint, no hydration mismatch. The effect keeps the
 // browser-chrome theme-color in step with a manual override, which the
 // media-query-only meta tags cannot do on their own.
-const THEME_COLORS = { light: '#fafafa', dark: '#0a0a0a' } as const
 
 function SunIcon() {
   return (

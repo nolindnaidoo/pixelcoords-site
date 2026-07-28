@@ -1,18 +1,11 @@
 import type { Metadata } from 'next'
 import { CoordChip } from '@/components/coord-chip'
+import { SITE_PAGES } from '@/lib/pages'
 
 export const metadata: Metadata = {
   title: 'Page not found',
   robots: { index: false },
 }
-
-const PAGES = [
-  { label: 'Home', href: '/' },
-  { label: 'vs PowerToys Screen Ruler', href: '/vs/powertoys-screen-ruler' },
-  { label: 'vs PixelSnap', href: '/vs/pixelsnap' },
-  { label: 'vs SikuliX', href: '/vs/sikulix' },
-  { label: 'How to get pixel coordinates', href: '/how-to/pixel-coordinates' },
-] as const
 
 export default function NotFound() {
   return (
@@ -25,13 +18,13 @@ export default function NotFound() {
         This point misses every marked region. The whole site is five pages:
       </p>
       <nav aria-label="Site pages" className="flex flex-col gap-1 font-mono text-sm">
-        {PAGES.map(page => (
+        {SITE_PAGES.map(page => (
           <a
-            key={page.href}
+            key={page.path}
             className="py-2 underline decoration-border-token underline-offset-4 hover:decoration-foreground"
-            href={page.href}
+            href={page.path}
           >
-            {page.label}
+            {page.navLabel}
           </a>
         ))}
       </nav>

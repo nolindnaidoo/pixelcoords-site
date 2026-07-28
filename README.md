@@ -21,6 +21,8 @@ Static Next.js export on Vercel. Deploys by push to `main`.
 
 ## The maintenance contract
 
+Every ritual with exact commands lives in [MAINTENANCE.md](MAINTENANCE.md).
+
 Every version-specific claim about another tool lives in that page's
 single comparison-table component, stamped "verified against X vY,
 <date>". Prose argues philosophy only (what the tools *are*), so it

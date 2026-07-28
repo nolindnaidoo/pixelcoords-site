@@ -1,0 +1,37 @@
+name: Update visual snapshots (Linux)
+
+# Manual: run after an INTENTIONAL visual change. Regenerates the Linux
+# visual-regression baselines on the same runner that judges CI and commits
+# them back to the branch. The macOS baselines are regenerated locally with
+# `bun run snapshots`. See MAINTENANCE.md.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshots-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bunx playwright install --with-deps chromium
+      - name: Regenerate Linux baselines
+        run: bunx playwright test e2e/visual.e2e.ts --update-snapshots
+      - name: Commit updated baselines
+        run: |
+          git config user.name "nolindnaidoo"
+          git config user.email "nolin.naidoo@me.com"
+          git add e2e/visual.e2e.ts-snapshots
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Visual baselines: Linux regenerated via update-snapshots workflow"
+          git push
