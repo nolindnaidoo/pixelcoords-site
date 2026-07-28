@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { fontHtmlClassName } from '@/app/fonts'
 import { Providers } from '@/app/providers'
+import { SiteFooter } from '@/components/site-footer'
+import { SiteHeader } from '@/components/site-header'
 import { SITE_URL, TAGLINE } from '@/lib/site'
 import './globals.css'
 
@@ -37,9 +39,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           >
             Skip to content
           </a>
+          <SiteHeader />
           <main id="main-content" className="flex-1">
             {children}
           </main>
+          <SiteFooter />
         </Providers>
         <Analytics />
       </body>

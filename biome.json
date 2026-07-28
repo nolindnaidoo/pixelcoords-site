@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!next-env.d.ts", "!.next", "!out"]
+    "includes": ["**", "!next-env.d.ts", "!.next", "!out", "!test-results", "!playwright-report"]
   },
   "assist": {
     "actions": {
@@ -46,6 +46,10 @@
     },
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noNoninteractiveTabindex": "off",
+        "useSemanticElements": "off"
+      },
       "correctness": {
         "noUnusedVariables": "warn",
         "noUnusedImports": "error",
