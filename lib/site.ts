@@ -1,7 +1,6 @@
 // Canonical site + tool facts. Every page and metadata file reads from here —
 // no URL or version string is written twice.
 export const SITE_URL = 'https://pixelcoords.dev'
-export const SITE_NAME = 'pixelcoords'
 export const TOOL_VERSION = '0.1.1'
 export const GITHUB_URL = 'https://github.com/nolindnaidoo/pixelcoords'
 export const CRATES_URL = 'https://crates.io/crates/pixelcoords'

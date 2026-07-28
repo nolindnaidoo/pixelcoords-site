@@ -27,4 +27,9 @@ describe('competitor quarantine data', () => {
       expect(wins.length).toBeGreaterThan(0)
     }
   })
+
+  it('pixelcoords does not sweep the table — the policy binds both ways', () => {
+    const losses = ROW_KEYS.filter(key => PIXELCOORDS_CELLS[key].wins !== true)
+    expect(losses.length).toBeGreaterThan(0)
+  })
 })

@@ -9,7 +9,7 @@ export const contentType = 'image/png'
 
 const HANDLE = 10
 
-function Handle({ position }: { position: Record<string, number> }) {
+function Handle({ position }: { readonly position: Record<string, number> }) {
   return (
     <div
       style={{

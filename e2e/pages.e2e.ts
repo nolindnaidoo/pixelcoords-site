@@ -11,13 +11,13 @@ const PAGES = [
 
 const SCHEMES = ['light', 'dark'] as const
 
-for (const page of PAGES) {
+for (const target of PAGES) {
   for (const scheme of SCHEMES) {
-    test(`${page.path} renders and is axe-clean in ${scheme}`, async ({ page: browserPage }) => {
-      await browserPage.emulateMedia({ colorScheme: scheme })
-      await browserPage.goto(page.path)
-      await expect(browserPage.getByRole('heading', { level: 1 })).toContainText(page.heading)
-      const results = await new AxeBuilder({ page: browserPage }).analyze()
+    test(`${target.path} renders and is axe-clean in ${scheme}`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme })
+      await page.goto(target.path)
+      await expect(page.getByRole('heading', { level: 1 })).toContainText(target.heading)
+      const results = await new AxeBuilder({ page }).analyze()
       expect(results.violations).toEqual([])
     })
   }

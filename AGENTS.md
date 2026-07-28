@@ -27,11 +27,14 @@ suggestions — see README.md.
 
 - **Next.js 16** (App Router) on React 19, static export. `@/*` → repo root.
 - **Components:** HeroUI v3 (`@heroui/react` + `@heroui/styles`, react-aria
-  based). All usage goes through the `ui/` seam.
+  based) stays available; its styles feed the token layer. **No HeroUI
+  primitive is in use yet** — when one is first needed, create its thin
+  re-export in `ui/` (the seam is created on first use, not up front).
 - **Styling:** Tailwind v4 via PostCSS; tokens in `app/globals.css` only.
   Variants with `tailwind-variants`, merging with `tailwind-merge`.
 - **Theming:** next-themes (`app/providers.tsx`) toggles `.light`/`.dark` on
-  `<html>`, system-driven, **no toggle UI**. Both themes must pass axe.
+  `<html>`; the header ThemeToggle records an explicit choice, system until
+  then. Both themes must pass axe.
 - **Fonts:** Geist Sans (body) + **JetBrains Mono vendored from the tool
   repo** (`app/fonts/`, OFL 1.1) — the same TTF feeds `next/font/local` and
   the ImageResponse OG cards.
@@ -39,9 +42,11 @@ suggestions — see README.md.
   2-space, 100-col, JSX attrs double-quoted. `bun run lint` is the arbiter;
   `bun run format` fixes. No ESLint.
 - **Tests:** `bun test` + happy-dom + @testing-library (preloaded via
-  `bunfig.toml`/`test-setup.ts`), jest-axe for component a11y; Playwright
-  (`e2e/*.e2e.ts`, mobile project first) + `@axe-core/playwright` against
-  the served `out/`. Suites stay minimal-but-real and grow with each page.
+  `bunfig.toml`/`test-setup.ts`) with jest-axe component tests colocated
+  beside the a11y-bearing components; Playwright (`e2e/*.e2e.ts`, mobile
+  project first) + `@axe-core/playwright` against the served `out/` covering
+  per-page axe in both schemes, keyboard navigation, 320px reflow, the theme
+  toggle, video motion (incl. reduced-motion), the 404, and SEO furniture.
 - **Package manager:** bun. Never add another lockfile.
 
 ## Deliberate deviations from the house doc
@@ -54,6 +59,16 @@ suggestions — see README.md.
   `/public` with explicit dimensions.
 - **No backend, no Zod** — there is nothing to parse; if a feature wants a
   fetch, it doesn't belong on this site.
+- **No-JS visitors get the light theme.** Theming is class-driven
+  (next-themes); `color-scheme` still gives them correct form controls and
+  scrollbars. Accepted progressive-enhancement tradeoff — duplicating every
+  token under a media query is not worth it.
+- **Hex colors are allowed in exactly two places:** ImageResponse files
+  (`app/icon.tsx`, `app/apple-icon.tsx`, `lib/og.tsx` — Satori cannot read
+  CSS custom properties) and the `themeColor`/theme-sync constants that must
+  mirror `globals.css` values as literals. Everywhere else, tokens only.
+- **Naming exceptions:** `og` (Open Graph, the protocol's name) and `coord`
+  (the tool's own "coordinate chip" vocabulary) are allowed like `id`/`url`.
 
 ## Architecture
 
@@ -70,7 +85,7 @@ e2e/            Playwright specs (*.e2e.ts) + page a11y
 
 - **Feature code imports HeroUI from `ui/`, never `@heroui/react` directly.**
   Re-exports stay thin; a wrapper may add a project default, never re-shape
-  the API.
+  the API. (`ui/` does not exist until the first primitive is adopted.)
 - Routes hold only what the segment owns (metadata, the shim render).
 - Features don't import features; shared things get promoted to
   `components/`/`lib/` when a second consumer appears — not before.

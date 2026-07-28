@@ -51,11 +51,13 @@ export function FeatureLoop() {
         {BEATS.map(beat => (
           <div
             key={beat.step}
-            className="flex flex-col gap-2 rounded-lg border border-border-token bg-surface p-4"
+            className="flex min-w-0 flex-col gap-2 rounded-lg border border-border-token bg-surface p-4"
           >
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-xs text-target">{beat.step}</span>
-              <code className="break-all font-mono text-sm text-foreground">{beat.command}</code>
+              <code className="min-w-0 break-all font-mono text-sm text-foreground">
+                {beat.command}
+              </code>
             </div>
             <p className="text-sm text-foreground/70 dark:text-foreground/55">{beat.line}</p>
             <pre

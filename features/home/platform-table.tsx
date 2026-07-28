@@ -26,7 +26,7 @@ export function PlatformTable() {
         tabIndex={0}
         role="region"
         aria-label="Platform status"
-        className="overflow-x-auto rounded-lg border border-border-token"
+        className="relative overflow-x-auto rounded-lg border border-border-token"
       >
         <table className="w-full min-w-[480px] border-collapse text-sm">
           <tbody>

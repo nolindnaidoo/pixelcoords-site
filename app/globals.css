@@ -68,6 +68,14 @@ body {
   overflow-x: clip;
 }
 
+/* Flex items refuse to shrink below their content's min-width, which lets a
+ * min-w-[640px] table punch through every ancestor and widen the document.
+ * Sections are the flex items in every page layout — let them shrink so the
+ * overflow-x-auto wrappers inside them can actually do their job. */
+section {
+  min-width: 0;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

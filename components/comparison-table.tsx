@@ -43,12 +43,12 @@ function CellContent({ cell }: { readonly cell: Cell }) {
 export function ComparisonTable({ competitors, rows, linkCompetitors }: ComparisonTableProps) {
   const rowKeys = rows ?? ROW_KEYS
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-3">
       <div
         tabIndex={0}
         role="region"
         aria-label="Feature comparison"
-        className="overflow-x-auto rounded-lg border border-border-token"
+        className="relative overflow-x-auto rounded-lg border border-border-token"
       >
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
@@ -64,16 +64,12 @@ export function ComparisonTable({ competitors, rows, linkCompetitors }: Comparis
               </th>
               {competitors.map(competitor => (
                 <th key={competitor.slug} scope="col" className="p-3 font-semibold">
-                  {linkCompetitors === true ? (
-                    <a
-                      className="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
-                      href={`/vs/${competitor.slug}`}
-                    >
-                      {competitor.name}
-                    </a>
-                  ) : (
-                    competitor.name
-                  )}
+                  <a
+                    className="py-2 underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+                    href={linkCompetitors === true ? `/vs/${competitor.slug}` : competitor.url}
+                  >
+                    {competitor.name}
+                  </a>
                 </th>
               ))}
             </tr>

@@ -8,7 +8,13 @@ import { ImageResponse } from 'next/og'
 // export. Every route's opengraph-image.tsx calls this with its own text.
 const SIZE = { width: 1200, height: 630 }
 
-export async function ogCard({ kicker, title }: { kicker: string; title: string }) {
+export async function ogCard({
+  kicker,
+  title,
+}: {
+  readonly kicker: string
+  readonly title: string
+}) {
   const fontPath = join(process.cwd(), 'app/fonts/JetBrainsMono-Regular.ttf')
   const mono = await readFile(fontPath).catch(() => {
     throw new Error(`OG card font missing: ${fontPath} — vendored TTF moved or deleted`)
