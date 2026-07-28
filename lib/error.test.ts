@@ -7,8 +7,8 @@ describe('reportError', () => {
     const spy = mock(() => {})
     console.error = spy
     const failure = new Error('clipboard denied')
-    reportError(failure, { source: 'install-block.copy' })
+    reportError(failure, { source: 'copy-button.write' })
     console.error = original
-    expect(spy).toHaveBeenCalledWith('[install-block.copy]', failure)
+    expect(spy).toHaveBeenCalledWith('[copy-button.write]', failure)
   })
 })

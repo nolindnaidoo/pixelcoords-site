@@ -9,7 +9,10 @@ import { ImageResponse } from 'next/og'
 const SIZE = { width: 1200, height: 630 }
 
 export async function ogCard({ kicker, title }: { kicker: string; title: string }) {
-  const mono = await readFile(join(process.cwd(), 'app/fonts/JetBrainsMono-Regular.ttf'))
+  const fontPath = join(process.cwd(), 'app/fonts/JetBrainsMono-Regular.ttf')
+  const mono = await readFile(fontPath).catch(() => {
+    throw new Error(`OG card font missing: ${fontPath} — vendored TTF moved or deleted`)
+  })
   const handle = {
     position: 'absolute' as const,
     width: 18,
