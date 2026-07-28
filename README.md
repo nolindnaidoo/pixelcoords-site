@@ -1,6 +1,8 @@
 # pixelcoords-site
 
 [![CI](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml/badge.svg)](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![pixelcoords.dev](https://img.shields.io/badge/web-pixelcoords.dev-00A0FF.svg)](https://pixelcoords.dev)
 
 **Live at [pixelcoords.dev](https://pixelcoords.dev)** — the promo and
 search site for [pixelcoords](https://github.com/nolindnaidoo/pixelcoords),
