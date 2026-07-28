@@ -86,3 +86,6 @@ visual snapshot is the symptom): edit the ranges in and run
   `THEME_COLORS` in `lib/site.ts` — change both together.
 - OG cards read the full TTF at `app/fonts/JetBrainsMono-Regular.ttf`;
   a missing file fails the build with a named error.
+- `/social.png` is the exported home OG card (used as both repos' GitHub
+  social preview). After changing `lib/og.tsx`:
+  `bun run build && cp out/opengraph-image public/social.png` and commit.

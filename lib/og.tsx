@@ -2,11 +2,42 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
 
-// Shared OG card: the selection motif framing the page title, rendered in the
-// tool's own JetBrains Mono (buffer-loaded — ImageResponse can't use
-// next/font). Flexbox-only CSS; PNGs are emitted at build under static
-// export. Every route's opengraph-image.tsx calls this with its own text.
+// Shared OG card: the selection motif framing the page title, the tool's
+// shape vocabulary drawn as inline SVG (Satori renders svg elements; CSS here
+// is flexbox-only), a machine-output JSON line for the thesis, and a Rust
+// chip. Fonts are buffer-loaded — ImageResponse can't use next/font. PNGs
+// emit at build under static export; every route's opengraph-image.tsx calls
+// this with its own text. A stable copy of the home card also ships as
+// /social.png for repo social previews (see MAINTENANCE.md).
 const SIZE = { width: 1200, height: 630 }
+
+const GREEN = '#00ff66'
+const BLUE = '#00a0ff'
+const AMBER = '#ffb000'
+const RUST = '#f74c00'
+
+function Shapes() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="200"
+      height="360"
+      viewBox="0 0 200 360"
+      fill="none"
+      style={{ position: 'absolute', right: 56, top: 100 }}
+    >
+      <rect x="30" y="10" width="140" height="80" stroke={GREEN} strokeWidth="3" />
+      <ellipse cx="100" cy="150" rx="70" ry="40" stroke={GREEN} strokeWidth="3" />
+      <polygon points="100,205 170,275 30,275" stroke={GREEN} strokeWidth="3" fill="none" />
+      <polygon
+        points="100,295 135,315 135,345 100,363 65,345 65,315"
+        stroke={GREEN}
+        strokeWidth="3"
+        fill="none"
+      />
+    </svg>
+  )
+}
 
 export async function ogCard({
   kicker,
@@ -23,7 +54,7 @@ export async function ogCard({
     position: 'absolute' as const,
     width: 18,
     height: 18,
-    background: '#00a0ff',
+    background: BLUE,
   }
   return new ImageResponse(
     <div
@@ -44,7 +75,7 @@ export async function ogCard({
           justifyContent: 'center',
           position: 'relative',
           border: '4px dashed #00a0ff',
-          padding: 64,
+          padding: '64px 280px 64px 64px',
         }}
       >
         <div style={{ ...handle, top: -11, left: -11 }} />
@@ -57,35 +88,54 @@ export async function ogCard({
             top: -18,
             left: 48,
             background: '#0a0a0a',
-            color: '#00ff66',
+            color: GREEN,
             fontSize: 24,
             padding: '0 16px',
           }}
         >
           {kicker}
         </div>
-        <div style={{ color: '#ededed', fontSize: 56, lineHeight: 1.25 }}>{title}</div>
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            right: 32,
-            color: '#ffb000',
-            fontSize: 22,
-          }}
-        >
-          1200x630
+        <Shapes />
+        <div style={{ color: '#ededed', fontSize: 54, lineHeight: 1.25 }}>{title}</div>
+        <div style={{ display: 'flex', marginTop: 28, color: GREEN, fontSize: 22 }}>
+          {'{ "px": { "x": 812, "y": 440 } }  # built for machines'}
         </div>
         <div
           style={{
             position: 'absolute',
             bottom: 24,
             left: 32,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
             color: '#ededed',
             fontSize: 22,
           }}
         >
           pixelcoords
+          <div
+            style={{
+              display: 'flex',
+              border: `2px solid ${RUST}`,
+              color: RUST,
+              borderRadius: 6,
+              padding: '2px 12px',
+              fontSize: 18,
+            }}
+          >
+            Rust
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            right: 32,
+            color: AMBER,
+            fontSize: 22,
+          }}
+        >
+          1200x630
         </div>
       </div>
     </div>,
