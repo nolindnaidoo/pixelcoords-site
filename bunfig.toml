@@ -1,4 +1,4 @@
 [test]
-# Registers a DOM (happy-dom) and jest-dom matchers before any test runs, so
-# component tests can render. See test-setup.ts.
-preload = ["./test-setup.ts"]
+# Order matters: test-dom.ts registers happy-dom BEFORE test-setup.ts (and
+# any test file) evaluates testing-library imports. See test-dom.ts.
+preload = ["./test-dom.ts", "./test-setup.ts"]
