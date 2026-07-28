@@ -33,4 +33,5 @@ https://github.com/nolindnaidoo/pixelcoords/releases
 
 Non-goals (settled): OCR, live measurement, annotation, recording, cloud.
 Source: https://github.com/nolindnaidoo/pixelcoords · crates.io:
-https://crates.io/crates/pixelcoords
+https://crates.io/crates/pixelcoords · Author: nolindnaidoo
+(https://github.com/nolindnaidoo)

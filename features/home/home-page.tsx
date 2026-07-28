@@ -42,6 +42,7 @@ const SOFTWARE_JSON_LD = {
   description: TAGLINE,
   license: 'https://opensource.org/license/mit/',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Person', name: 'nolindnaidoo', url: 'https://github.com/nolindnaidoo' },
   url: SITE_URL,
   downloadUrl: RELEASES_URL,
   sameAs: [GITHUB_URL, CRATES_URL],

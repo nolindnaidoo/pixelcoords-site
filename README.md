@@ -2,9 +2,11 @@
 
 [![CI](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml/badge.svg)](https://github.com/nolindnaidoo/pixelcoords-site/actions/workflows/ci.yml)
 
-The promo and search site for [pixelcoords](https://github.com/nolindnaidoo/pixelcoords)
-— the freeze-your-screen coordinate tool on
-[crates.io](https://crates.io/crates/pixelcoords).
+**Live at [pixelcoords.dev](https://pixelcoords.dev)** — the promo and
+search site for [pixelcoords](https://github.com/nolindnaidoo/pixelcoords),
+the freeze-your-screen coordinate tool on
+[crates.io](https://crates.io/crates/pixelcoords). Built by
+[nolindnaidoo](https://github.com/nolindnaidoo).
 
 Static Next.js export on Vercel. Deploys by push to `main`.
 

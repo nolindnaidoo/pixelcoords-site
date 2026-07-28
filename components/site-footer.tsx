@@ -34,7 +34,16 @@ export function SiteFooter() {
             </a>
           ))}
         </nav>
-        <p className="font-mono text-xs">MIT licensed. Claims match runs.</p>
+        <p className="font-mono text-xs">
+          MIT licensed. Claims match runs. Built by{' '}
+          <a
+            className="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+            href="https://github.com/nolindnaidoo"
+          >
+            nolindnaidoo
+          </a>
+          .
+        </p>
       </div>
     </footer>
   )
