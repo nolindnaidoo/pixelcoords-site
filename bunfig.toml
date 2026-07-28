@@ -1,0 +1,4 @@
+[test]
+# Registers a DOM (happy-dom) and jest-dom matchers before any test runs, so
+# component tests can render. See test-setup.ts.
+preload = ["./test-setup.ts"]

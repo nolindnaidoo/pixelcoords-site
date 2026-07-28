@@ -1,26 +1,75 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 
-:root {
-  --background: #ffffff;
+/* Brand theme tokens — overrides of the @heroui/styles semantic variables,
+ * unlayered so they beat HeroUI's @layer'd definitions regardless of import
+ * order. next-themes toggles `.light`/`.dark` on <html> (system-driven, no
+ * toggle UI); @heroui/styles keys its token blocks on those classes.
+ *
+ * Vocabulary the site styles against:
+ *   bg-background      page canvas
+ *   bg-surface         raised card / HUD panel
+ *   text-foreground    full-strength text; muted = the alpha ramp
+ *                      (text-foreground/70 dark:text-foreground/55 family)
+ *   text-preview       the tool's preview-outline blue
+ *   text-committed     the tool's committed-outline green
+ *   text-target        the tool's --target window amber
+ *
+ * Dark uses the tool's exact overlay colors; light uses contrast-tuned
+ * variants (each ≥4.5:1 on the light canvas for text use). The -dim washes
+ * are panel backgrounds, same alpha both themes. */
+:root,
+.light {
+  --background: #fafafa;
+  --surface: #ffffff;
   --foreground: #171717;
+  --border-token: rgba(0, 0, 0, 0.12);
+  --preview: #005a9e;
+  --committed: #04703f;
+  --target: #8a5d06;
+  --preview-dim: rgba(0, 160, 255, 0.1);
+  --committed-dim: rgba(0, 255, 102, 0.1);
+  --target-dim: rgba(255, 176, 0, 0.12);
+}
+
+.dark {
+  --background: #0a0a0a;
+  --surface: #141414;
+  --foreground: #ededed;
+  --border-token: rgba(255, 255, 255, 0.14);
+  --preview: #00a0ff;
+  --committed: #00ff66;
+  --target: #ffb000;
+  --preview-dim: rgba(0, 160, 255, 0.1);
+  --committed-dim: rgba(0, 255, 102, 0.1);
+  --target-dim: rgba(255, 176, 0, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-border-token: var(--border-token);
+  --color-preview: var(--preview);
+  --color-committed: var(--committed);
+  --color-target: var(--target);
+  --color-preview-dim: var(--preview-dim);
+  --color-committed-dim: var(--committed-dim);
+  --color-target-dim: var(--target-dim);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* The document never scrolls horizontally; wide content scrolls inside its
+ * own overflow-x-auto wrapper. `clip` (not `hidden`) so html/body don't
+ * become a scroll-port ancestor, which would silently kill position:sticky. */
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }

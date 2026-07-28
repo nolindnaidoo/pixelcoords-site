@@ -1,10 +1,10 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   // Pure static export — this site is a poster, not an app. No server
   // components doing work, no API routes, no runtime. If a change needs
   // any of those, the change is wrong for this repo.
-  output: "export",
-};
+  output: 'export',
+}
 
-export default nextConfig;
+export default nextConfig
