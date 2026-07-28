@@ -1,12 +1,12 @@
 import { CodeBlock } from '@/components/code-block'
 import { ComparisonTable } from '@/components/comparison-table'
 import { CoordChip } from '@/components/coord-chip'
+import { InstallBlock } from '@/components/install-block'
 import { JsonLd } from '@/components/json-ld'
 import { COMPETITORS } from '@/lib/competitors'
 import { CRATES_URL, GITHUB_URL, RELEASES_URL, SITE_URL, TAGLINE, TOOL_VERSION } from '@/lib/site'
 import { FeatureLoop } from './feature-loop'
 import { Hero } from './hero'
-import { InstallBlock } from './install-block'
 import { NonGoals } from './non-goals'
 import { PlatformTable } from './platform-table'
 
@@ -76,7 +76,7 @@ export function HomePage() {
           <CoordChip tone="preview">comparison</CoordChip>
           Where it stands
         </h2>
-        <ComparisonTable competitors={COMPETITORS} />
+        <ComparisonTable competitors={COMPETITORS} linkCompetitors />
       </section>
       <NonGoals />
       <PlatformTable />

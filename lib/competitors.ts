@@ -107,3 +107,10 @@ export const COMPETITORS: readonly Competitor[] = [
     },
   },
 ] as const
+
+/** Lookup that guarantees presence — a page referencing a missing slug is a build-time bug. */
+export function competitorBySlug(slug: string): Competitor {
+  const found = COMPETITORS.find(entry => entry.slug === slug)
+  if (found === undefined) throw new Error(`unknown competitor: ${slug}`)
+  return found
+}
