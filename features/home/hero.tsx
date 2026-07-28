@@ -21,13 +21,13 @@ export function Hero() {
         </p>
         <div className="flex flex-wrap gap-4 font-mono text-sm">
           <a
-            className="rounded bg-foreground px-5 py-3 text-background hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-preview"
+            className="rounded bg-foreground px-5 py-3 text-background hover:opacity-90"
             href="#install"
           >
             Install
           </a>
           <a
-            className="rounded border border-border-token px-5 py-3 hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-preview"
+            className="rounded border border-border-token px-5 py-3 hover:bg-surface"
             href={GITHUB_URL}
           >
             GitHub

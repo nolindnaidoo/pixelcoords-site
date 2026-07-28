@@ -22,7 +22,7 @@ export function CopyButton({ text }: { readonly text: string }) {
     <button
       type="button"
       onClick={handlePress}
-      className="min-h-11 rounded border border-border-token px-3 font-mono text-xs text-foreground/70 hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-preview dark:text-foreground/55"
+      className="min-h-11 rounded border border-border-token px-3 font-mono text-xs text-foreground/70 hover:bg-surface dark:text-foreground/55"
       aria-label={`Copy: ${text}`}
     >
       {hasCopied ? 'copied' : 'copy'}

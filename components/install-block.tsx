@@ -8,7 +8,9 @@ export function InstallBlock({ variant }: { readonly variant: 'full' | 'compact'
   return (
     <section id="install" className="flex scroll-mt-8 flex-col gap-4">
       <h2 className="flex items-center gap-3 text-2xl font-semibold">
-        <CoordChip tone="preview">install</CoordChip>
+        <CoordChip ariaHidden tone="preview">
+          install
+        </CoordChip>
         Two ways in
       </h2>
       <CodeBlock ariaLabel="Install command" copy="cargo install pixelcoords">

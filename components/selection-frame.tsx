@@ -54,7 +54,11 @@ export function SelectionFrame({ children, label, tone, className }: SelectionFr
           style={position}
         />
       ))}
-      {label === undefined ? null : <span className={labelSlot()}>{label}</span>}
+      {label === undefined ? null : (
+        <span aria-hidden className={labelSlot()}>
+          {label}
+        </span>
+      )}
       {children}
     </div>
   )

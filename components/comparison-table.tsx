@@ -1,5 +1,6 @@
 import { CoordChip } from '@/components/coord-chip'
 import {
+  type Cell,
   type Competitor,
   PIXELCOORDS_CELLS,
   ROW_KEYS,
@@ -17,15 +18,19 @@ type ComparisonTableProps = {
   readonly linkCompetitors?: boolean
 }
 
-function CellContent({
-  cell,
-}: {
-  readonly cell: { value: string; wins?: boolean; note?: string }
-}) {
+function CellContent({ cell }: { readonly cell: Cell }) {
+  if (cell.value === '—') {
+    return (
+      <span>
+        <span aria-hidden>—</span>
+        <span className="sr-only">not offered</span>
+      </span>
+    )
+  }
   return (
     <div className="flex flex-col gap-1">
       <span className={cell.wins === true ? 'text-committed' : undefined}>
-        {cell.wins === true ? '✓ ' : ''}
+        {cell.wins === true ? <span aria-hidden>{'✓ '}</span> : null}
         {cell.value}
       </span>
       {cell.note === undefined ? null : (
@@ -48,12 +53,17 @@ export function ComparisonTable({ competitors, rows, linkCompetitors }: Comparis
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-border-token bg-surface text-left">
-              <th className="p-3 font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55">
+              <th
+                scope="col"
+                className="p-3 font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55"
+              >
                 <span className="sr-only">Feature</span>
               </th>
-              <th className="p-3 font-semibold">pixelcoords</th>
+              <th scope="col" className="p-3 font-semibold">
+                pixelcoords
+              </th>
               {competitors.map(competitor => (
-                <th key={competitor.slug} className="p-3 font-semibold">
+                <th key={competitor.slug} scope="col" className="p-3 font-semibold">
                   {linkCompetitors === true ? (
                     <a
                       className="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
@@ -71,7 +81,10 @@ export function ComparisonTable({ competitors, rows, linkCompetitors }: Comparis
           <tbody>
             {rowKeys.map(key => (
               <tr key={key} className="border-b border-border-token last:border-b-0 align-top">
-                <th className="p-3 text-left font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55">
+                <th
+                  scope="row"
+                  className="p-3 text-left font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55"
+                >
                   {ROW_LABELS[key]}
                 </th>
                 <td className="p-3">

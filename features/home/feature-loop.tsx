@@ -42,7 +42,9 @@ export function FeatureLoop() {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="flex items-center gap-3 text-2xl font-semibold">
-        <CoordChip tone="preview">loop</CoordChip>
+        <CoordChip ariaHidden tone="preview">
+          loop
+        </CoordChip>
         The tool is a loop
       </h2>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -57,7 +59,7 @@ export function FeatureLoop() {
             </div>
             <p className="text-sm text-foreground/70 dark:text-foreground/55">{beat.line}</p>
             <pre
-              role="region"
+              role="group"
               tabIndex={0}
               aria-label={`${beat.command} output`}
               className="overflow-x-auto rounded bg-background p-2 font-mono text-xs leading-5 text-committed"

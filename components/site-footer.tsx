@@ -38,9 +38,7 @@ export function SiteFooter() {
             </a>
           ))}
         </nav>
-        <p className="font-mono text-xs">
-          MIT licensed. This table is kept honest — claims match runs.
-        </p>
+        <p className="font-mono text-xs">MIT licensed. Claims match runs.</p>
       </div>
     </footer>
   )

@@ -24,7 +24,7 @@ export function CodeBlock({ children, ariaLabel, label, copy, className }: CodeB
       )}
       <div className="flex items-start gap-2 rounded-lg border border-border-token bg-surface p-4">
         <pre
-          role="region"
+          role="group"
           tabIndex={0}
           aria-label={ariaLabel}
           className="flex-1 overflow-x-auto font-mono text-sm leading-6"

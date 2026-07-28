@@ -53,7 +53,9 @@ export function HomePage() {
       <Hero />
       <section className="flex flex-col gap-4">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">60s</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            60s
+          </CoordChip>
           Sixty seconds
         </h2>
         <CodeBlock ariaLabel="Sixty-second tour">{SIXTY_SECONDS}</CodeBlock>
@@ -61,7 +63,9 @@ export function HomePage() {
       <FeatureLoop />
       <section className="flex flex-col gap-4">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">outputs</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            outputs
+          </CoordChip>
           What a save writes
         </h2>
         <CodeBlock ariaLabel="Files a save writes">{SAVE_TREE}</CodeBlock>
@@ -73,7 +77,9 @@ export function HomePage() {
       </section>
       <section className="flex flex-col gap-4">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">comparison</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            comparison
+          </CoordChip>
           Where it stands
         </h2>
         <ComparisonTable competitors={COMPETITORS} linkCompetitors />

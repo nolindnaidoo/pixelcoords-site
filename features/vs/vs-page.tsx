@@ -29,7 +29,9 @@ export function VsPage({ competitor, framing, verdict, whenThem, whenUs }: VsPag
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">verdict</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            verdict
+          </CoordChip>
           The short version
         </h2>
         <div className="max-w-3xl rounded-lg border border-border-token bg-surface p-5 leading-7">
@@ -39,7 +41,9 @@ export function VsPage({ competitor, framing, verdict, whenThem, whenUs }: VsPag
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">side by side</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            side by side
+          </CoordChip>
           Feature for feature
         </h2>
         <ComparisonTable competitors={[competitor]} />
@@ -66,7 +70,9 @@ export function VsPage({ competitor, framing, verdict, whenThem, whenUs }: VsPag
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="committed">demo</CoordChip>
+          <CoordChip ariaHidden tone="committed">
+            demo
+          </CoordChip>
           Thirty seconds of pixelcoords
         </h2>
         <SelectionFrame label="demo — 30s" tone="committed">

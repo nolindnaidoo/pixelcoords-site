@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `pixelcoords — ${TAGLINE}`,
-    template: '%s',
+    template: '%s — pixelcoords',
   },
   description:
     'Freeze your screen, mark regions with real shapes, and get machine-usable output: versioned JSON coordinates, labeled crops, click code, and verification. Free, MIT, macOS/Windows/Linux.',

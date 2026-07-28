@@ -17,7 +17,9 @@ export function NonGoals() {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="flex items-center gap-3 text-2xl font-semibold">
-        <CoordChip tone="preview">cutout-inverse</CoordChip>
+        <CoordChip ariaHidden tone="preview">
+          cutout-inverse
+        </CoordChip>
         Non-goals
       </h2>
       <p>Knowing what a tool is means knowing what it isn&apos;t. These are settled:</p>

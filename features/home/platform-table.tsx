@@ -17,7 +17,9 @@ export function PlatformTable() {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="flex items-center gap-3 text-2xl font-semibold">
-        <CoordChip tone="preview">platforms</CoordChip>
+        <CoordChip ariaHidden tone="preview">
+          platforms
+        </CoordChip>
         Platform status
       </h2>
       <div
@@ -33,7 +35,7 @@ export function PlatformTable() {
                 key={platform.name}
                 className="border-b border-border-token align-top last:border-b-0"
               >
-                <th className="w-40 p-3 text-left font-mono text-xs font-normal">
+                <th scope="row" className="w-40 p-3 text-left font-mono text-xs font-normal">
                   {platform.name}
                 </th>
                 <td className="p-3">{platform.state}</td>

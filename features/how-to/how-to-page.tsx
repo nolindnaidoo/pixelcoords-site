@@ -58,7 +58,9 @@ function OsSection({
   return (
     <section className="flex flex-col gap-4">
       <h2 className="flex items-center gap-3 text-2xl font-semibold">
-        <CoordChip tone="preview">{chip}</CoordChip>
+        <CoordChip ariaHidden tone="preview">
+          {chip}
+        </CoordChip>
         {title}
       </h2>
       {children}
@@ -157,7 +159,9 @@ pixelcoords emit --session <dir> --format xdotool     # physical px`}
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="committed">beyond</CoordChip>
+          <CoordChip ariaHidden tone="committed">
+            beyond
+          </CoordChip>
           When a number isn&apos;t enough
         </h2>
         <p className="leading-7">
@@ -179,7 +183,9 @@ pixelcoords emit --session <dir> --format xdotool     # physical px`}
 
       <section className="flex flex-col gap-4">
         <h2 className="flex items-center gap-3 text-2xl font-semibold">
-          <CoordChip tone="preview">faq</CoordChip>
+          <CoordChip ariaHidden tone="preview">
+            faq
+          </CoordChip>
           Questions people actually ask
         </h2>
         <div className="flex flex-col gap-2">
