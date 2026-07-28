@@ -45,7 +45,7 @@
     "jest-axe": "^11.0.0",
     "serve": "^14.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "ignoreScripts": [
     "sharp",
