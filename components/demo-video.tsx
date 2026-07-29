@@ -41,12 +41,12 @@ export function DemoVideo({ className }: { readonly className?: string }) {
     <div className="flex flex-col">
       {/* The poster is the LCP element on every page that embeds the demo —
           React 19 hoists this link into <head> at prerender. */}
-      <link rel="preload" as="image" href="/demo-poster.jpg" fetchPriority="high" />
+      <link rel="preload" as="image" href="/demo-poster.webp" fetchPriority="high" />
       <div className="relative">
         <video
           ref={videoRef}
           className={className}
-          poster="/demo-poster.jpg"
+          poster="/demo-poster.webp"
           width={1200}
           height={868}
           muted
