@@ -24,7 +24,7 @@ jobs:
 
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: bunx playwright install chromium --with-deps
+      - run: bunx playwright install chromium webkit --with-deps
 
       - name: Regenerate baselines
         run: bun run e2e -- --update-snapshots

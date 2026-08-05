@@ -49,7 +49,7 @@ jobs:
         run: bun run verify:content
 
       - name: Install Playwright browser
-        run: bunx playwright install chromium --with-deps
+        run: bunx playwright install chromium webkit --with-deps
 
       - name: Accessibility, end-to-end & visual
         run: bun run e2e

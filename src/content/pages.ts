@@ -107,16 +107,27 @@ export type PageHead = Readonly<{
   ogTitle: string
 }>
 
+/**
+ * The one absolute URL for a page — the canonical, and the only thing any
+ * surface should point at.
+ *
+ * `/` canonicalises to the bare origin, matching what every other signal on
+ * the site says. A trailing slash would be a second URL for the same page, and
+ * that is exactly how this drifted: the sitemap and `og:url` each rebuilt the
+ * URL from `SITE_URL + path`, so the home page was advertised as
+ * `https://pixelcoords.dev/` while its own canonical said otherwise.
+ */
+export function canonicalUrl(path: string): string {
+  return path === '/' ? SITE_URL : `${SITE_URL}${path}`
+}
+
 export function pageHead(path: string): PageHead {
   const page = pageByPath(path)
   return Object.freeze({
     title: page.title,
     description: page.description,
-    // `/` canonicalises to the bare origin, matching what every other
-    // signal on the site says. A trailing slash would be a second URL for the
-    // same page.
-    canonical: page.path === '/' ? SITE_URL : `${SITE_URL}${page.path}`,
-    ogUrl: `${SITE_URL}${page.path}`,
+    canonical: canonicalUrl(page.path),
+    ogUrl: canonicalUrl(page.path),
     ogImage: `${SITE_URL}${ogImagePath(page.path)}`,
     ogKicker: page.ogKicker,
     ogTitle: page.ogTitle,

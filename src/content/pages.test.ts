@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ogImagePath, pageByPath, pageHead, SITE_PAGES } from './pages'
+import { canonicalUrl, ogImagePath, pageByPath, pageHead, SITE_PAGES } from './pages'
 import { SITE_URL } from './site'
 
 /**
@@ -68,6 +68,25 @@ describe('pageHead', () => {
   it('points at an absolute OG image, which consumers require', () => {
     for (const page of SITE_PAGES) {
       expect(pageHead(page.path).ogImage.startsWith('https://')).toBe(true)
+    }
+  })
+
+  it('advertises the canonical as og:url, never a second spelling', () => {
+    // These drifted apart once: og:url and the sitemap each rebuilt the URL
+    // from SITE_URL + path, so the home page shipped `…dev/` in both while
+    // its canonical said `…dev`. Every surface now reads canonicalUrl.
+    for (const page of SITE_PAGES) {
+      const head = pageHead(page.path)
+      expect(head.ogUrl, `og:url disagrees with the canonical on ${page.path}`).toBe(head.canonical)
+      expect(head.canonical).toBe(canonicalUrl(page.path))
+    }
+  })
+
+  it('gives the home page no trailing slash and every other page exactly one path', () => {
+    expect(canonicalUrl('/')).toBe(SITE_URL)
+    expect(canonicalUrl('/vs/sikulix')).toBe(`${SITE_URL}/vs/sikulix`)
+    for (const page of SITE_PAGES) {
+      expect(canonicalUrl(page.path).endsWith('/')).toBe(false)
     }
   })
 })

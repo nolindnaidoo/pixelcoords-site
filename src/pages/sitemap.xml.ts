@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro'
-import { SITE_PAGES } from '@/content/pages'
-import { SITE_URL } from '@/content/site'
+import { canonicalUrl, SITE_PAGES } from '@/content/pages'
 
 export const prerender = true
 
@@ -8,11 +7,15 @@ export const prerender = true
  * Every entry derives from the page registry, including `lastModified` and
  * `sitemapPriority` — adding a page cannot forget the sitemap, because there
  * is no second list to update.
+ *
+ * The URL comes from `canonicalUrl`, not from `SITE_URL + path`: a sitemap
+ * that advertises a URL the page does not claim as canonical is a sitemap
+ * arguing with the page.
  */
 export const GET: APIRoute = () => {
   const urls = SITE_PAGES.map(
     page => `  <url>
-    <loc>${SITE_URL}${page.path}</loc>
+    <loc>${canonicalUrl(page.path)}</loc>
     <lastmod>${page.lastModified}</lastmod>
     <priority>${page.sitemapPriority}</priority>
   </url>`,
