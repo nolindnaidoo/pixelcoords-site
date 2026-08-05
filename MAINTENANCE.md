@@ -129,6 +129,16 @@ Then follow the visual-change ritual.
 
 - `public/.well-known/security.txt` carries an `Expires` — renew yearly
   (next: 2027-07-28).
+- **CodeQL default setup must stay off.** This repo runs the advanced workflow
+  (`.github/workflows/codeql.yml` + `codeql-config.yml`, which excludes tests
+  and fixtures). GitHub refuses SARIF from an advanced config while default
+  setup is enabled, and the job fails with a message that reads like a parse
+  error. It is a repo *setting*, not a file, so nothing in the tree records it:
+
+  ```bash
+  gh api repos/nolindnaidoo/pixelcoords-site/code-scanning/default-setup --jq .state
+  # not-configured  ← required
+  ```
 - Theme canvas colors live in TWO places by necessity:
   `src/styles/global.css` and `THEME_COLORS` in `src/content/site.ts` — change
   both together. The toggle reads the constants to update the `theme-color`

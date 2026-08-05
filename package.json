@@ -17,9 +17,10 @@
     "verify:content": "bun scripts/check-content-drift.ts",
     "lint:commits": "node scripts/commit-lint.js --range \"${BASE_SHA:-origin/main}\" \"${HEAD_SHA:-HEAD}\"",
     "hooks:install": "git config core.hooksPath .githooks",
-    "verify": "bun run lint && bun run typecheck && bun run test:coverage && bun run build && bun run budget && bun run verify:content && bun run e2e",
+    "verify": "bun run lint && bun run typecheck && bun run test:coverage && bun run build && bun run routes && bun run budget && bun run verify:content && bun run e2e",
     "lighthouse": "lhci autorun",
-    "snapshots": "playwright test e2e/visual.e2e.ts --update-snapshots"
+    "snapshots": "playwright test e2e/visual.e2e.ts --update-snapshots",
+    "routes": "bun scripts/check-routes.ts"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

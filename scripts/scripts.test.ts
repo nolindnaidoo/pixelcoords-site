@@ -3,9 +3,17 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
 import { COMPETITORS } from '../src/content/competitors'
+import { SITE_PAGES } from '../src/content/pages'
 import { TOOL_VERSION } from '../src/content/site'
 import { BUDGETS, main as budgetMain, kb, walk } from './check-budget'
 import { main as driftMain, publishedVersion, staleStamps } from './check-content-drift'
+import {
+  readCleanUrls,
+  readFormat,
+  readHosting,
+  resolves,
+  main as routesMain,
+} from './check-routes'
 
 /**
  * The scripts are gates. Run once and seen to print a tick, they prove the
@@ -120,5 +128,76 @@ describe('check-content-drift', () => {
   it('leaves fresh stamps alone', () => {
     const firstStamp = COMPETITORS[0]?.verifiedAgainst.date ?? '2026-07-28'
     expect(staleStamps(new Date(firstStamp))).toHaveLength(0)
+  })
+})
+
+/**
+ * The gate that would have caught four pages 404ing in production. The cases
+ * below are the four combinations of the two settings that decide it, because
+ * the bug was not a wrong value — it was that nothing related the two.
+ */
+describe('check-routes', () => {
+  it('reads the format Astro is configured for, defaulting as Astro does', () => {
+    expect(readFormat("build: { format: 'file' }")).toBe('file')
+    expect(readFormat('build: { format: "file" }')).toBe('file')
+    expect(readFormat("build: { format: 'directory' }")).toBe('directory')
+    expect(readFormat('export default {}')).toBe('directory')
+  })
+
+  it('reads cleanUrls, defaulting as Vercel does', () => {
+    expect(readCleanUrls('{"cleanUrls": true}')).toBe(true)
+    expect(readCleanUrls('{"cleanUrls": false}')).toBe(false)
+    expect(readCleanUrls('{}')).toBe(false)
+  })
+
+  it('serves the root index whatever the settings', () => {
+    expect(resolves('/', { format: 'file', cleanUrls: false })).toBe('index.html')
+    expect(resolves('/', { format: 'directory', cleanUrls: false })).toBe('index.html')
+  })
+
+  it('resolves a directory build without needing cleanUrls', () => {
+    expect(resolves('/vs/pixelsnap', { format: 'directory', cleanUrls: false })).toBe(
+      'vs/pixelsnap/index.html',
+    )
+  })
+
+  it('resolves a file build only when cleanUrls is on', () => {
+    expect(resolves('/vs/pixelsnap', { format: 'file', cleanUrls: true })).toBe('vs/pixelsnap.html')
+    // The shipped bug, reproduced: a file build with cleanUrls off is a 404.
+    expect(resolves('/vs/pixelsnap', { format: 'file', cleanUrls: false })).toBeUndefined()
+  })
+
+  /** A build carrying an emitted file for every registry path. */
+  function builtPages(suffix: (path: string) => string): Record<string, number> {
+    return Object.fromEntries(
+      SITE_PAGES.map(page => [
+        page.path === '/' ? 'index.html' : suffix(page.path.replace(/^\//, '')),
+        10,
+      ]),
+    )
+  }
+
+  it('passes when every registry path has a file behind it', () => {
+    const build = fakeBuild(builtPages(bare => `${bare}.html`))
+    expect(routesMain(build, { format: 'file', cleanUrls: true })).toBe(0)
+  })
+
+  it('fails the whole shipped configuration, not just one route', () => {
+    // Exactly what production served: the files exist, the paths do not reach
+    // them. Everything but the root 404s.
+    const build = fakeBuild(builtPages(bare => `${bare}.html`))
+    expect(routesMain(build, { format: 'file', cleanUrls: false })).toBe(1)
+  })
+
+  it('fails when a registry entry has no emitted file at all', () => {
+    const build = fakeBuild({ 'index.html': 10 })
+    expect(routesMain(build, { format: 'file', cleanUrls: true })).toBe(1)
+  })
+
+  it('reads the real configs, which must agree with each other', () => {
+    // The repo's own settings — this is the assertion that would have failed
+    // before the fix, and it needs no build to do it.
+    const hosting = readHosting()
+    expect(resolves('/vs/pixelsnap', hosting)).toBeDefined()
   })
 })

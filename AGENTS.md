@@ -207,6 +207,13 @@ machine generally does not.
 - **Coverage** is enforced at 100 statements/functions/lines and 97 branches
   over `src/content`, `src/lib` and `scripts`. `.astro` files are excluded
   because a coverage number over markup measures templating, not behaviour.
+- **Routes** — `scripts/check-routes.ts` resolves every registry path the way
+  Vercel would and asserts a built file is behind it. It exists because the
+  site shipped with four of five pages 404ing while every other gate was
+  green: `build.format: 'file'` emits `vs/pixelsnap.html`, `astro preview`
+  resolves an extensionless request to it and Vercel does not unless
+  `cleanUrls` is on. **`build.format` and `vercel.json`'s `cleanUrls` are one
+  decision in two files** — change either and this gate is what catches it.
 - **Payload budget** — `scripts/check-budget.ts`. Raising it needs a written
   reason.
 - **Content drift** — `scripts/check-content-drift.ts` checks `TOOL_VERSION`
