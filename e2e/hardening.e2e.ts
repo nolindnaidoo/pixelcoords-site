@@ -174,6 +174,38 @@ test.describe('stylesheet', () => {
   })
 })
 
+test.describe('declared assets', () => {
+  test('every icon and manifest the head points at actually resolves', async ({
+    page,
+    request,
+  }) => {
+    await page.goto('/')
+
+    // `apple-touch-icon.png` was referenced by a link on every page and by the
+    // manifest, and 404'd on all of them: the port dropped the file that
+    // generated it. Nothing surfaces this — a missing icon is silent in the
+    // browser, in axe, and in the build.
+    const hrefs = await page
+      .locator('link[rel*="icon"], link[rel="manifest"]')
+      .evaluateAll(nodes => nodes.map(node => node.getAttribute('href') ?? ''))
+
+    expect(hrefs.length, 'the head declares no icons at all').toBeGreaterThan(0)
+
+    for (const href of hrefs) {
+      const response = await request.get(href)
+      expect(response.status(), `${href} is declared but does not resolve`).toBe(200)
+    }
+  })
+
+  test('the manifest only lists icons that resolve', async ({ request }) => {
+    const manifest = await (await request.get('/manifest.webmanifest')).json()
+    for (const icon of manifest.icons as { src: string }[]) {
+      const response = await request.get(icon.src)
+      expect(response.status(), `${icon.src} is in the manifest but does not resolve`).toBe(200)
+    }
+  })
+})
+
 test.describe('code blocks', () => {
   for (const path of SITE_PAGES.map(page => page.path)) {
     test(`${path} indents its code samples only where the sample does`, async ({ page }) => {

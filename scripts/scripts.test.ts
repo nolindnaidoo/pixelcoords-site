@@ -5,6 +5,7 @@ import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
 import { COMPETITORS } from '../src/content/competitors'
 import { SITE_PAGES } from '../src/content/pages'
 import { TOOL_VERSION } from '../src/content/site'
+import { card, touchIcon } from './build-og'
 import { BUDGETS, main as budgetMain, kb, walk } from './check-budget'
 import { main as driftMain, publishedVersion, staleStamps } from './check-content-drift'
 import {
@@ -199,5 +200,45 @@ describe('check-routes', () => {
     // before the fix, and it needs no build to do it.
     const hosting = readHosting()
     expect(resolves('/vs/pixelsnap', hosting)).toBeDefined()
+  })
+})
+
+/**
+ * The two pure builders in `build-og.ts`. Its `main` launches a browser, so
+ * the file stays outside the coverage scope — but these carry real invariants
+ * and the images they produce are the first thing anyone sees when a link is
+ * shared or the site is saved to a home screen.
+ */
+describe('build-og', () => {
+  it('inlines the vendored face rather than linking it', () => {
+    // A `<link>` to a font would resolve against nothing in `setContent`, and
+    // the card would silently render in a system face.
+    const html = card('data:font/woff2;base64,AAAA', 'KICKER', 'A title')
+    expect(html).toContain("src: url('data:font/woff2;base64,AAAA') format('woff2')")
+    expect(html).not.toMatch(/<link[^>]+font/i)
+  })
+
+  it('renders the kicker and title it is given', () => {
+    const html = card('data:font/woff2;base64,AAAA', 'COMPARISON', 'pixelcoords vs SikuliX')
+    expect(html).toContain('COMPARISON')
+    expect(html).toContain('pixelcoords vs SikuliX')
+  })
+
+  it('stamps the card with the version the site claims', () => {
+    expect(card('data:,', 'K', 'T')).toContain(`v${TOOL_VERSION}`)
+  })
+
+  it('builds the touch icon from the favicon, inlined', () => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg"><rect fill="#00a0ff"/></svg>'
+    const html = touchIcon(svg)
+    const encoded = Buffer.from(svg).toString('base64')
+    expect(html).toContain(`data:image/svg+xml;base64,${encoded}`)
+  })
+
+  it('sizes the touch icon at what iOS asks for', () => {
+    // Anything else gets scaled and softened on the home screen.
+    const html = touchIcon('<svg/>')
+    expect(html).toContain('width: 180px')
+    expect(html).toContain('height: 180px')
   })
 })

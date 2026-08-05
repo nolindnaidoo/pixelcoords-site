@@ -205,8 +205,20 @@ failure names itself in the job list, plus warn-level Lighthouse budgets
 machine generally does not.
 
 - **Coverage** is enforced at 100 statements/functions/lines and 97 branches
-  over `src/content`, `src/lib` and `scripts`. `.astro` files are excluded
-  because a coverage number over markup measures templating, not behaviour.
+  over `src/content`, `src/lib`, **`src/pages/*.ts`** and `scripts`. `.astro`
+  files are excluded because a coverage number over markup measures templating,
+  not behaviour.
+
+  The generated routes are in scope deliberately. They were outside it when the
+  sitemap started advertising a URL no page claimed as canonical, and they are
+  the crawler's entire view of the site — a wrong origin there is silent.
+  Vitest does not read tsconfig paths, so `vitest.config.ts` declares the `@/*`
+  alias itself; without it anything using the alias is simply untestable, which
+  is how those routes came to have no tests.
+
+  A test that lives in `src/pages/` needs a leading underscore. Astro routes
+  every file in that directory and will otherwise try to build the test as a
+  page.
 - **Routes** — `scripts/check-routes.ts` resolves every registry path the way
   Vercel would and asserts a built file is behind it. It exists because the
   site shipped with four of five pages 404ing while every other gate was
@@ -222,8 +234,18 @@ machine generally does not.
 - **Visual baselines** are platform-suffixed: macOS generated locally, Linux
   on the CI runner via the update-baselines workflow. The video is masked.
 
-`bun run og` re-renders the five Open Graph cards. They are committed, not built
-at deploy — a crawler must find them on first request.
+- **Declared assets** — an e2e gate fetches every `<link rel=*icon*>` and every
+  icon in the manifest and asserts it resolves. `apple-touch-icon.png` was
+  referenced by both and 404'd on every page for the whole life of the port: a
+  missing icon is silent in the browser, in axe, and in the build.
+- **Code samples** — an e2e gate asserts no `<pre>` begins with whitespace,
+  because `pre` preserves the markup's own indentation and it renders as a
+  first line pushed far right above continuation lines at the margin.
+
+`bun run og` re-renders the five Open Graph cards **and the touch icon**. They
+are committed, not built at deploy — a crawler must find them on first request.
+The touch icon is rendered from `public/favicon.svg` rather than drawn a second
+time, so the mark cannot drift from itself.
 
 After `build`, `dist/` must contain the page HTML, `robots.txt`,
 `sitemap.xml`, and the icon/OG PNGs. A change is done when it is

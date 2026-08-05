@@ -22,10 +22,15 @@ import { TOOL_VERSION } from '../src/content/site'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const FONT = resolve(ROOT, 'public/fonts/JetBrainsMono-Regular.subset.woff2')
+const FAVICON = resolve(ROOT, 'public/favicon.svg')
 
 /** Open Graph's canonical size; every consumer crops from this ratio. */
 const WIDTH = 1200
 const HEIGHT = 630
+
+/** Apple's touch-icon size. iOS scales anything else and softens the edges. */
+const TOUCH_ICON_SIZE = 180
+const TOUCH_ICON_FILE = 'apple-touch-icon.png'
 
 // The tool's overlay palette, as literals — this markup never sees the
 // stylesheet, so the tokens cannot reach it.
@@ -34,6 +39,23 @@ const INK = '#ededed'
 const GREEN = '#00ff66'
 const BLUE = '#00a0ff'
 const AMBER = '#ffb000'
+
+/**
+ * The touch icon, rendered from `public/favicon.svg` rather than redrawn.
+ *
+ * The Next build drew the same selection motif a second time in JSX, and the
+ * port dropped that file — leaving the manifest and a `<link>` on every page
+ * pointing at an `apple-touch-icon.png` that 404'd. Reading the favicon means
+ * there is one mark, and it cannot drift from itself.
+ */
+export function touchIcon(svg: string = readFileSync(FAVICON, 'utf8')): string {
+  const inlined = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+  return `<!doctype html><html><head><style>
+    html, body { margin: 0; padding: 0; }
+    body { width: ${TOUCH_ICON_SIZE}px; height: ${TOUCH_ICON_SIZE}px; background: ${CANVAS}; }
+    img { width: 100%; height: 100%; display: block; }
+  </style></head><body><img src="${inlined}" alt=""></body></html>`
+}
 
 export function card(fontDataUri: string, kicker: string, title: string): string {
   return `<!doctype html>
@@ -117,6 +139,11 @@ async function main(): Promise<number> {
       await page.screenshot({ path: out, type: 'png' })
       process.stdout.write(`  ${ogImagePath(entry.path)}\n`)
     }
+
+    await page.setViewportSize({ width: TOUCH_ICON_SIZE, height: TOUCH_ICON_SIZE })
+    await page.setContent(touchIcon(), { waitUntil: 'load' })
+    await page.screenshot({ path: resolve(ROOT, `public/${TOUCH_ICON_FILE}`), type: 'png' })
+    process.stdout.write(`  /${TOUCH_ICON_FILE}\n`)
   } finally {
     await browser.close()
   }
