@@ -47,4 +47,18 @@ jobs:
 
           echo "Committing $(git diff --cached --name-only -- e2e | wc -l) baseline file(s)."
           git commit -m "test: regenerate visual baselines for linux"
-          git push
+
+          # The run takes minutes, and a push landing in that window rejects
+          # this one — which is how the first successful generation was thrown
+          # away after writing all 36 files. This commit only adds PNGs under
+          # e2e/, so replaying it onto whatever arrived is always correct.
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt); rebasing onto the new head."
+            git pull --rebase origin main
+          done
+
+          echo "::error::Could not push baselines after 3 attempts."
+          exit 1

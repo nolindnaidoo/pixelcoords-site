@@ -81,14 +81,15 @@ const BEATS = [
               </code>
             </div>
             <p class="text-sm text-foreground/70 dark:text-foreground/55">{beat.line}</p>
+            {/* The expression hugs the tags: `pre` preserves whitespace, so a
+                newline and the source indentation would render as a first-line
+                indent that nothing in the data asked for. */}
             <pre
               role="group"
               tabindex="0"
               aria-label={`${beat.command} output`}
               class="overflow-x-auto rounded bg-background p-2 font-mono text-xs leading-5 text-committed"
-            >
-              {beat.artifact}
-            </pre>
+            >{beat.artifact}</pre>
           </div>
         ))}
       </div>

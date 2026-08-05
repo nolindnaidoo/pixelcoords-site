@@ -173,3 +173,24 @@ test.describe('stylesheet', () => {
     expect(failures, 'subresources failed to load').toEqual([])
   })
 })
+
+test.describe('code blocks', () => {
+  for (const path of SITE_PAGES.map(page => page.path)) {
+    test(`${path} indents its code samples only where the sample does`, async ({ page }) => {
+      await page.goto(path)
+
+      // `pre` preserves whitespace, so writing `>{expr}<` across separate lines
+      // silently prefixes every sample with the source's own indentation. It
+      // rendered as a first line pushed far right above continuation lines at
+      // the margin, which reads as broken output rather than formatted code.
+      const samples = await page.locator('pre').allTextContents()
+      expect(samples.length, 'no code samples found to check').toBeGreaterThan(0)
+
+      for (const sample of samples) {
+        expect(sample, 'a code sample starts with whitespace from the markup').toBe(
+          sample.replace(/^\s+/, ''),
+        )
+      }
+    })
+  }
+})

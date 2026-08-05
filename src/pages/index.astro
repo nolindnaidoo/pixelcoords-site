@@ -21,7 +21,11 @@ import NonGoals from '@/features/home/NonGoals.astro'
 import PlatformTable from '@/features/home/PlatformTable.astro'
 import Layout from '@/layouts/Layout.astro'
 
-const SIXTY_SECONDS = `pixelcoords                      # screen freezes; drag shapes, A labels, S saves
+// Every comment sits on its own line at column 0. Padding them into a column
+// only lines up at one width: three of these used to hang at column 34 while
+// the rest started at the margin, which read as ragged rather than aligned.
+const SIXTY_SECONDS = `pixelcoords
+# screen freezes; drag shapes, A labels, S saves
 # → Downloads/pixelcoords-captures/<timestamp>/
 #   session.json  screenshot-0.png  cutout-primary-0.png  cutout-inverse-0.png  crop-0-submit.png
 
@@ -44,10 +48,12 @@ pixelcoords diff --session <dir> --against baseline/
 pixelcoords find --session <dir>
 # the UI moved? every region re-located by its saved crop, deltas included
 
-pixelcoords mcp                   # serve all of the above to an LLM over stdio
+pixelcoords mcp
+# serve all of the above to an LLM over stdio
 # read-only: it asks about sessions you marked, it cannot make one
 
-pixelcoords resume                # pick any saved session, keep editing it`
+pixelcoords resume
+# pick any saved session, keep editing it`
 
 const SAVE_TREE = `pixelcoords-captures/20260728-182121-117/
 ├── session.json              # versioned schema: three coordinate spaces, DPI scale
