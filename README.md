@@ -58,9 +58,9 @@ spent "the last slot", which is not a reason a reader would recognize.
 
 Every ritual with exact commands lives in [MAINTENANCE.md](MAINTENANCE.md).
 
-Every version-specific claim about another tool lives in that page's
-single comparison-table component, stamped "verified against X vY,
-<date>". Prose argues philosophy only (what the tools *are*), so it
+Every version-specific claim about another tool lives in
+[`src/content/competitors.ts`](src/content/competitors.ts), stamped
+"verified against X vY, <date>". Prose argues philosophy only (what the tools *are*), so it
 does not go stale. Re-verification = walk the tables, update stamps —
 twice a year, calendared, about an hour. Negative claims are always
 dated. Concessions are generous on purpose.
