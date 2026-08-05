@@ -1,0 +1,66 @@
+---
+import CoordChip from '@/components/CoordChip.astro'
+
+// The tool README's platform table, hedges included — reproduce the hedges,
+// not just the wins.
+const PLATFORMS = [
+  { name: 'macOS', state: 'Supported — primary development platform' },
+  { name: 'Windows', state: 'Supported — verified by hand on Windows 11' },
+  { name: 'Linux (X11)', state: 'Supported — verified by hand on GNOME 46; every feature works' },
+  {
+    name: 'Linux (Wayland)',
+    state:
+      'Screen coordinates + --pick window marking — verified by hand on GNOME 46; no windows / --target (the protocol withholds window geometry)',
+  },
+] as const
+---
+
+<section class="flex flex-col gap-4">
+      <h2 class="flex items-center gap-3 text-2xl font-semibold">
+        <CoordChip ariaHidden tone="preview">
+          platforms
+        </CoordChip>
+        Platform status
+      </h2>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Platform status"
+        class="relative overflow-x-auto rounded-lg border border-border-token"
+      >
+        <table class="w-full min-w-[480px] border-collapse text-sm">
+          <tbody>
+            {PLATFORMS.map(platform => (
+              <tr
+                class="border-b border-border-token align-top last:border-b-0"
+              >
+                <th scope="row" class="w-40 p-3 text-left font-mono text-xs font-normal">
+                  {platform.name}
+                </th>
+                <td class="p-3">{platform.state}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm text-foreground/70 dark:text-foreground/55">
+        Hand-verification is per platform <em>and</em> per release, so the rows above are not a
+        blanket claim. On macOS the overlay was driven by hand through 0.5.0 — multi-monitor and
+        mixed-DPI included, two displays at different scales with every coordinate recorded where it
+        was drawn — and 0.5.1&apos;s capture path was checked against a real capture. Windows and
+        Linux were verified by hand through 0.4.0. Nothing since 0.5.1 has had a human overlay run
+        on any platform, which covers the mid-gesture Shift fix and the comfort settings — both
+        change how the overlay behaves, and both are backed by automated tests only. The MCP server
+        is not on that list: it adds no overlay code, and it was driven end to end against a real
+        session. Multi-monitor off macOS, and fractional scaling anywhere, remain test-only. This
+        table is kept honest — claims match runs, and where a run has not happened it says so.
+      </p>
+      <p class="text-sm text-foreground/70 dark:text-foreground/55">
+        What <em>is</em> checked automatically, on macOS, Windows and Linux, every push: the binary
+        driven against a real capture of the runner&apos;s screen — shoot, find, resolve, assert,
+        diff, wait, emit, rename, every shape kind, all six MCP tools — plus display-free tests
+        pinning every exit code across every command. That is a great deal more than it was, and it
+        is still not the overlay. Drawing, dragging, undo, the loupe, snapping, the permission
+        prompts and window targeting need a person at a machine.
+      </p>
+    </section>

@@ -1,0 +1,54 @@
+---
+import DemoVideo from '@/components/DemoVideo.astro'
+import SelectionFrame from '@/components/SelectionFrame.astro'
+import { GITHUB_URL, TAGLINE } from '@/content/site'
+
+// Copy is the tool README's, verbatim — the site stages it, never forks it.
+---
+
+<section class="flex flex-col gap-8">
+  <div class="flex flex-col gap-4">
+    <h1
+      class="max-w-3xl text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-tight tracking-tight"
+    >
+      {TAGLINE}
+    </h1>
+    <p class="font-mono text-sm text-foreground/70 dark:text-foreground/55">
+      Rectangles, ellipses, triangles, N-gons, freehand, rulers — rotate, label, verify, regenerate
+    </p>
+    <p class="max-w-2xl text-lg leading-8">
+      Every screen tool that measures pixels ends at a human&apos;s eyeball: a ruler shows you a
+      number, a screenshot app draws an arrow, a mouse tracker prints a position you copy by hand.
+      pixelcoords starts from a different premise —{' '}
+      <strong>the real consumer of a coordinate is a machine.</strong>
+    </p>
+    <p class="max-w-2xl leading-8 text-foreground/70 dark:text-foreground/55">
+      It freezes your screen so nothing moves while you measure, then lets you mark regions with
+      real shapes — rotated, labeled, and placed to the exact pixel with a loupe and arrow-key
+      nudging, plus rulers that report distance and angle between any two points. Marks snap to the
+      UI edges already in the frozen image, so a rect around a button lands on the button. What you
+      mark becomes data, not a picture: versioned JSON in physical pixels with per-monitor DPI
+      scale, the color under each click point, labeled crops and frame-sized cutouts, and
+      ready-to-paste click code.
+    </p>
+    <p class="max-w-2xl leading-8 text-foreground/70 dark:text-foreground/55">
+      Those answers are also served over MCP, so a model can ask them directly instead of being
+      handed a screenshot: <code class="font-mono text-sm">pixelcoords mcp</code>, six read-only
+      tools, no subprocess to wire up. Asking a marked session where to click reads a file and
+      answers in microseconds and sends no image at all — the alternative is a screenshot per step,
+      and a long computer-use task runs to hundreds of steps. A human still marks the regions; the
+      model does the rest.
+    </p>
+    <div class="flex flex-wrap gap-4 font-mono text-sm">
+      <a class="rounded bg-foreground px-5 py-3 text-background hover:opacity-90" href="#install"
+        >Install</a
+      >
+      <a class="rounded border border-border-token px-5 py-3 hover:bg-surface" href={GITHUB_URL}
+        >GitHub</a
+      >
+    </div>
+  </div>
+  <SelectionFrame label="demo — 30s" tone="committed">
+    <DemoVideo class="block h-auto w-full" />
+  </SelectionFrame>
+</section>

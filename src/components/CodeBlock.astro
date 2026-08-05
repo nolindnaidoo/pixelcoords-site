@@ -1,0 +1,37 @@
+---
+import CoordChip from '@/components/CoordChip.astro'
+import CopyButton from '@/components/CopyButton.astro'
+
+/**
+ * Monospace block on a HUD-panel surface. Wide content scrolls inside the
+ * block, never the page. `copy` puts the command on the clipboard verbatim —
+ * only pass single commands, not annotated multi-line samples.
+ */
+type Props = {
+  /** Accessible name for the scrollable region — must be unique per page. */
+  readonly ariaLabel: string
+  readonly label?: string
+  readonly copy?: string
+  readonly class?: string
+}
+
+const { ariaLabel, label, copy, class: className } = Astro.props
+---
+
+<div class={className}>
+  {
+    label === undefined ? null : (
+      <div class="mb-2">
+        <CoordChip tone="preview">{label}</CoordChip>
+      </div>
+    )
+  }
+  <div class="flex items-start gap-2 rounded-lg border border-border-token bg-surface p-4">
+    <pre
+      role="group"
+      tabindex="0"
+      aria-label={ariaLabel}
+      class="flex-1 overflow-x-auto font-mono text-sm leading-6"><code><slot /></code></pre>
+    {copy === undefined ? null : <CopyButton text={copy} />}
+  </div>
+</div>

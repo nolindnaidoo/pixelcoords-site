@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # `bun`, not `npm`. The npm updater rewrites package.json without
+  # regenerating bun.lock, so its PRs can never pass the frozen-lockfile gate.
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        patterns: ['*']
+
+  # Keeps the SHA pins current — Dependabot reads the trailing "# vX.Y.Z"
+  # comment and rewrites both the SHA and the comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

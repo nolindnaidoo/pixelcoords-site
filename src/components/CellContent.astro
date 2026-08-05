@@ -1,0 +1,35 @@
+---
+import type { Cell } from '@/content/competitors'
+
+/**
+ * One comparison cell. Extracted to its own file because Astro has no inline
+ * component form — in React this was a local function in the table module.
+ *
+ * An absence renders a neutral em dash, never a red X: the table concedes
+ * plainly and a competitor win gets the same positive treatment as ours. The
+ * dash is aria-hidden with "not offered" beside it, since a screen reader
+ * announcing "em dash" says nothing.
+ */
+type Props = { readonly cell: Cell }
+
+const { cell } = Astro.props
+---
+
+{
+  cell.value === '—' ? (
+    <span>
+      <span aria-hidden="true">—</span>
+      <span class="sr-only">not offered</span>
+    </span>
+  ) : (
+    <div class="flex flex-col gap-1">
+      <span class={cell.wins === true ? 'text-committed' : undefined}>
+        {cell.wins === true ? <span aria-hidden="true">{'✓ '}</span> : null}
+        {cell.value}
+      </span>
+      {cell.note === undefined ? null : (
+        <span class="text-xs text-foreground/70 dark:text-foreground/55">{cell.note}</span>
+      )}
+    </div>
+  )
+}

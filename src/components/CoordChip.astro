@@ -1,0 +1,35 @@
+---
+/**
+ * The tool's coordinate-chip motif as an inline micro-label: section kickers,
+ * literal coordinates, and the comparison table's verified stamps.
+ *
+ * Kickers rendered inside headings must pass `ariaHidden` so the chip text
+ * does not pollute the heading's accessible name ("macos macOS").
+ *
+ * A plain lookup rather than tailwind-variants: four tones do not justify a
+ * dependency, and the map is the whole API.
+ */
+type Tone = 'neutral' | 'preview' | 'committed' | 'target'
+
+type Props = {
+  readonly tone?: Tone
+  readonly class?: string
+  readonly ariaHidden?: boolean
+}
+
+const TONES: Record<Tone, string> = {
+  neutral: 'text-foreground/70 dark:text-foreground/55',
+  preview: 'text-preview',
+  committed: 'text-committed',
+  target: 'text-target',
+}
+
+const BASE =
+  'inline-flex items-center gap-1 rounded border border-border-token bg-surface px-1.5 py-0.5 font-mono text-xs'
+
+const { tone = 'neutral', class: className, ariaHidden } = Astro.props
+---
+
+<span aria-hidden={ariaHidden === true ? 'true' : undefined} class:list={[BASE, TONES[tone], className]}>
+  <slot />
+</span>

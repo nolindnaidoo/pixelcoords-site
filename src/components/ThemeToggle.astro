@@ -1,0 +1,90 @@
+---
+import { THEME_COLORS } from '@/content/site'
+
+/**
+ * Sun/moon toggle: the site follows the OS until the first click, then the
+ * explicit choice persists.
+ *
+ * Both icons and both labels are always in the DOM, and CSS picks the pair
+ * from the class the blocking script already set. That removes the mount
+ * placeholder the React version needed — there is no moment where the button
+ * is inert or the wrong glyph, and no hydration gap, because the correct state
+ * is rendered by the stylesheet rather than decided by JavaScript.
+ *
+ * `display: none` also takes the wrong label out of the accessibility tree, so
+ * the accessible name is always the one action available.
+ */
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  data-light={THEME_COLORS.light}
+  data-dark={THEME_COLORS.dark}
+  class="flex h-11 w-11 items-center justify-center rounded border border-border-token hover:bg-surface"
+>
+  <svg class="icon-moon" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+      d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7Z"></path>
+  </svg>
+  <svg class="icon-sun" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="3.25" stroke="currentColor" stroke-width="1.5"></circle>
+    <path
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      d="M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1m11.95-4.95-1.06 1.06M4.11 11.89l-1.06 1.06m9.9 0-1.06-1.06M4.11 4.11 3.05 3.05"
+    ></path>
+  </svg>
+  <span class="sr-only label-dark">Switch to light theme</span>
+  <span class="sr-only label-light">Switch to dark theme</span>
+</button>
+
+<style is:global>
+  /* Light is the default rendering: moon shown, "switch to dark" announced. */
+  [data-theme-toggle] .icon-sun,
+  [data-theme-toggle] .label-dark {
+    display: none;
+  }
+
+  .dark [data-theme-toggle] .icon-sun,
+  .dark [data-theme-toggle] .label-dark {
+    display: inline;
+  }
+
+  .dark [data-theme-toggle] .icon-moon,
+  .dark [data-theme-toggle] .label-light {
+    display: none;
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')
+
+  toggle?.addEventListener('click', () => {
+    const root = document.documentElement
+    const nextIsDark = !root.classList.contains('dark')
+
+    root.classList.toggle('dark', nextIsDark)
+    root.classList.toggle('light', !nextIsDark)
+
+    try {
+      localStorage.setItem('theme', nextIsDark ? 'dark' : 'light')
+    } catch {
+      // Private mode can refuse the write. The choice still applies for this
+      // page; it just will not survive a reload. Failing the toggle over it
+      // would be worse.
+    }
+
+    // The media-query theme-color metas cannot follow a manual override, so
+    // the browser chrome would keep tracking the OS while the page does not.
+    const colour = nextIsDark ? toggle.dataset.dark : toggle.dataset.light
+    if (colour === undefined) return
+    for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
+      meta.setAttribute('content', colour)
+    }
+  })
+</script>

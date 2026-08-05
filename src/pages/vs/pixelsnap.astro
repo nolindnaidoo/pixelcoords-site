@@ -1,0 +1,41 @@
+---
+import { competitorBySlug } from '@/content/competitors'
+import VsPage from '@/features/vs/VsPage.astro'
+import Layout from '@/layouts/Layout.astro'
+
+const competitor = competitorBySlug('pixelsnap')
+
+const whenThem = [
+  'You measure designs on a Mac all day and want the smoothest measuring experience that exists — its live edge-snapping is the best in this category, and measuring the live screen is something pixelcoords deliberately does not do.',
+  'You want dimensions burned into screenshots for design handoff.',
+  'A one-time $39 for a daily-driver design tool is an easy yes for you.',
+]
+
+const whenUs = [
+  "You're on Windows or Linux — PixelSnap doesn't run there.",
+  'You want free and open source (MIT), with no license to manage.',
+  'The output needs to be data: coordinates in three spaces with DPI scale, crops, cutouts, click code.',
+  'You need verification and drift-healing — assert exit codes for CI, find for when the UI moves.',
+]
+---
+
+<Layout path="/vs/pixelsnap">
+  <VsPage
+    competitor={competitor}
+    framing="A polished paid mac tool for designers, and a free cross-platform tool for machines."
+    whenThem={whenThem}
+    whenUs={whenUs}
+  >
+    <p>
+          PixelSnap is genuinely excellent at what it does: its edge-snapping makes measuring a
+          design on screen feel effortless, and for a designer measuring specs all day, $39 is a
+          fair price for that craft. pixelcoords snaps to edges and measures distances too, but on a
+          frozen screenshot rather than the live screen, and PixelSnap has years of feel-tuning on
+          it — this isn&apos;t where we&apos;d tell you we win. What pixelcoords competes on is what
+          the measurement becomes. Where PixelSnap ends at dimensions on your screen, pixelcoords
+          produces session.json, labeled crops, click code, and verification a script can run. And
+          if you searched for PixelSnap on Windows or Linux: it&apos;s macOS-only, and pixelcoords
+          isn&apos;t.
+        </p>
+  </VsPage>
+</Layout>

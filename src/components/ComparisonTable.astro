@@ -1,0 +1,87 @@
+---
+import CellContent from '@/components/CellContent.astro'
+import CoordChip from '@/components/CoordChip.astro'
+import {
+  type Competitor,
+  PIXELCOORDS_CELLS,
+  ROW_KEYS,
+  ROW_LABELS,
+  type RowKey,
+} from '@/content/competitors'
+
+// Renders the quarantine data — this component and lib/competitors.ts are the
+// ONLY places version-specific competitor claims may appear. Competitor wins
+// get the same positive check treatment as ours; absences are a neutral "—",
+// never a red X. The dated stamps below the table are non-negotiable.
+type Props = {
+  readonly competitors: readonly Competitor[]
+  readonly rows?: readonly RowKey[]
+  readonly linkCompetitors?: boolean
+}
+
+const { competitors, rows, linkCompetitors } = Astro.props
+const rowKeys = rows ?? ROW_KEYS
+---
+
+<div class="flex min-w-0 flex-col gap-3">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Feature comparison"
+        class="relative overflow-x-auto rounded-lg border border-border-token"
+      >
+        <table class="w-full min-w-[640px] border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-border-token bg-surface text-left">
+              <th
+                scope="col"
+                class="p-3 font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55"
+              >
+                <span class="sr-only">Feature</span>
+              </th>
+              <th scope="col" class="p-3 font-semibold">
+                pixelcoords
+              </th>
+              {competitors.map(competitor => (
+                <th scope="col" class="p-3 font-semibold">
+                  <a
+                    class="py-2 underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+                    href={linkCompetitors === true ? `/vs/${competitor.slug}` : competitor.url}
+                  >
+                    {competitor.name}
+                  </a>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rowKeys.map(key => (
+              <tr class="border-b border-border-token last:border-b-0 align-top">
+                <th
+                  scope="row"
+                  class="p-3 text-left font-mono text-xs font-normal text-foreground/70 dark:text-foreground/55"
+                >
+                  {ROW_LABELS[key]}
+                </th>
+                <td class="p-3">
+                  <CellContent cell={PIXELCOORDS_CELLS[key]} />
+                </td>
+                {competitors.map(competitor => (
+                  <td class="p-3">
+                    <CellContent cell={competitor.cells[key]} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        {competitors.map(competitor => (
+          <CoordChip tone="target">
+            verified against {competitor.name} v{competitor.verifiedAgainst.version},{' '}
+            {competitor.verifiedAgainst.date}
+          </CoordChip>
+        ))}
+      </div>
+    </div>

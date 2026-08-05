@@ -1,0 +1,79 @@
+---
+import ComparisonTable from '@/components/ComparisonTable.astro'
+import CoordChip from '@/components/CoordChip.astro'
+import DemoVideo from '@/components/DemoVideo.astro'
+import InstallBlock from '@/components/InstallBlock.astro'
+import SelectionFrame from '@/components/SelectionFrame.astro'
+import type { Competitor } from '@/content/competitors'
+
+/**
+ * The settled /vs section order. Verdict and when-lists argue philosophy only
+ * (durable, undated); every version-specific claim renders from the quarantine
+ * data with its stamp.
+ *
+ * The verdict arrives as a slot rather than a prop — it is markup, and React's
+ * ReactNode has no prop equivalent here.
+ */
+type Props = {
+  readonly competitor: Competitor
+  readonly framing: string
+  readonly whenThem: readonly string[]
+  readonly whenUs: readonly string[]
+}
+
+const { competitor, framing, whenThem, whenUs } = Astro.props
+---
+
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-12 px-6 py-12 sm:py-16">
+  <header class="flex flex-col gap-3">
+    <h1 class="text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-tight tracking-tight">
+      pixelcoords vs {competitor.name}
+    </h1>
+    <p class="max-w-2xl text-lg text-foreground/70 dark:text-foreground/55">{framing}</p>
+  </header>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="flex items-center gap-3 text-2xl font-semibold">
+      <CoordChip ariaHidden tone="preview">verdict</CoordChip>
+      The short version
+    </h2>
+    <div class="max-w-3xl rounded-lg border border-border-token bg-surface p-5 leading-7">
+      <slot />
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="flex items-center gap-3 text-2xl font-semibold">
+      <CoordChip ariaHidden tone="preview">side by side</CoordChip>
+      Feature for feature
+    </h2>
+    <ComparisonTable competitors={[competitor]} />
+  </section>
+
+  <div class="grid gap-8 sm:grid-cols-2">
+    <section class="flex flex-col gap-3">
+      <h2 class="text-xl font-semibold">When to pick {competitor.name}</h2>
+      <ul class="flex list-disc flex-col gap-2 pl-5 leading-7">
+        {whenThem.map(item => <li>{item}</li>)}
+      </ul>
+    </section>
+    <section class="flex flex-col gap-3">
+      <h2 class="text-xl font-semibold">When to pick pixelcoords</h2>
+      <ul class="flex list-disc flex-col gap-2 pl-5 leading-7">
+        {whenUs.map(item => <li>{item}</li>)}
+      </ul>
+    </section>
+  </div>
+
+  <section class="flex flex-col gap-3">
+    <h2 class="flex items-center gap-3 text-2xl font-semibold">
+      <CoordChip ariaHidden tone="committed">demo</CoordChip>
+      Thirty seconds of pixelcoords
+    </h2>
+    <SelectionFrame label="demo — 30s" tone="committed">
+      <DemoVideo class="block h-auto w-full" />
+    </SelectionFrame>
+  </section>
+
+  <InstallBlock variant="compact" />
+</div>

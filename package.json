@@ -1,0 +1,38 @@
+{
+  "name": "pixelcoords-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "astro check",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "e2e": "playwright test",
+    "og": "bun scripts/build-og.ts",
+    "budget": "bun scripts/check-budget.ts",
+    "verify:content": "bun scripts/check-content-drift.ts",
+    "lint:commits": "node scripts/commit-lint.js --range \"${BASE_SHA:-origin/main}\" \"${HEAD_SHA:-HEAD}\"",
+    "hooks:install": "git config core.hooksPath .githooks",
+    "verify": "bun run lint && bun run typecheck && bun run test:coverage && bun run build && bun run budget && bun run verify:content && bun run e2e",
+    "lighthouse": "lhci autorun",
+    "snapshots": "playwright test e2e/visual.e2e.ts --update-snapshots"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.12.1",
+    "@biomejs/biome": "^2.5.7",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.1.2",
+    "@vitest/coverage-v8": "^4.1.10",
+    "astro": "^7.1.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6",
+    "vitest": "^4.1.10"
+  }
+}

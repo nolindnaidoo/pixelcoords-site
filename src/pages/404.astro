@@ -1,0 +1,63 @@
+---
+import CoordChip from '@/components/CoordChip.astro'
+import SiteFooter from '@/components/SiteFooter.astro'
+import SiteHeader from '@/components/SiteHeader.astro'
+import { SITE_PAGES } from '@/content/pages'
+import { THEME_COLORS } from '@/content/site'
+import '@/styles/global.css'
+
+/**
+ * Not in the registry on purpose: it is not a page of the site, it is what the
+ * site says when you are outside it. That also means it carries its own head
+ * rather than Layout's, since Layout derives everything from a registry entry.
+ */
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page not found</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content={THEME_COLORS.light} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={THEME_COLORS.dark} media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      ;(() => {
+        try {
+          const stored = localStorage.getItem('theme')
+          const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          document.documentElement.classList.add(stored === 'light' || stored === 'dark' ? stored : system)
+        } catch {
+          document.documentElement.classList.add('light')
+        }
+      })()
+    </script>
+  </head>
+  <body class="bg-background text-foreground font-sans antialiased">
+    <SiteHeader />
+    <main id="main-content" tabindex="-1" class="focus:outline-none">
+      <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-24">
+        <CoordChip ariaHidden tone="target" class="self-start">404 — outside every region</CoordChip>
+        <h1 class="text-3xl font-semibold tracking-tight">Page not found</h1>
+        <p class="text-foreground/70 dark:text-foreground/55">
+          This point misses every marked region. The whole site is five pages:
+        </p>
+        <nav aria-label="Site pages" class="flex flex-col gap-1 font-mono text-sm">
+          {
+            SITE_PAGES.map(page => (
+              <a
+                class="py-2 underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+                href={page.path}
+              >
+                {page.navLabel}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </main>
+    <SiteFooter />
+  </body>
+</html>

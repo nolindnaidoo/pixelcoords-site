@@ -1,0 +1,95 @@
+---
+import CodeBlock from '@/components/CodeBlock.astro'
+import CoordChip from '@/components/CoordChip.astro'
+import { DOCS_BASE_URL } from '@/content/site'
+
+// The tool's own MCP section, from README + docs/CLI.md. Every row here is a
+// tool the server actually serves; "captures" is reproduced because on macOS
+// it is the difference between an instant answer and a permission prompt.
+const CLIENT_CONFIG = `{
+  "mcpServers": {
+    "pixelcoords": { "command": "pixelcoords", "args": ["mcp"] }
+  }
+}`
+
+const TOOLS = [
+  { name: 'pixelcoords_sessions', subcommand: '—', captures: 'no' },
+  { name: 'pixelcoords_resolve', subcommand: 'resolve', captures: 'only with relocate' },
+  { name: 'pixelcoords_assert', subcommand: 'assert', captures: 'no' },
+  { name: 'pixelcoords_wait', subcommand: 'wait', captures: 'every poll, and blocks' },
+  { name: 'pixelcoords_find', subcommand: 'find', captures: 'yes' },
+  { name: 'pixelcoords_diff', subcommand: 'diff', captures: 'unless against is stored' },
+] as const
+---
+
+<section class="flex flex-col gap-4">
+      <h2 class="flex items-center gap-3 text-2xl font-semibold">
+        <CoordChip ariaHidden tone="committed">
+          mcp
+        </CoordChip>
+        Drive it with your LLM
+      </h2>
+      <p class="max-w-2xl leading-7">
+        The loop above answers the questions a machine asks. Reaching it still took a human — wire a
+        subprocess call, remember the flag spellings, parse stdout.{' '}
+        <code class="font-mono text-sm">pixelcoords mcp</code> serves the same commands over the
+        Model Context Protocol on stdio, so a model calls them directly. Point a client at the
+        binary:
+      </p>
+      <CodeBlock ariaLabel="MCP client configuration">{CLIENT_CONFIG}</CodeBlock>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="MCP tools"
+        class="relative overflow-x-auto rounded-lg border border-border-token"
+      >
+        <table class="w-full min-w-[520px] border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-border-token">
+              <th scope="col" class="p-3 text-left font-mono text-xs font-normal">
+                tool
+              </th>
+              <th scope="col" class="p-3 text-left font-mono text-xs font-normal">
+                subcommand
+              </th>
+              <th scope="col" class="p-3 text-left font-mono text-xs font-normal">
+                captures the screen
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {TOOLS.map(tool => (
+              <tr
+                class="border-b border-border-token align-top last:border-b-0"
+              >
+                <th scope="row" class="p-3 text-left font-mono text-xs font-normal">
+                  {tool.name}
+                </th>
+                <td class="p-3 font-mono text-xs">{tool.subcommand}</td>
+                <td class="p-3 text-foreground/70 dark:text-foreground/55">{tool.captures}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="max-w-2xl text-sm leading-7 text-foreground/70 dark:text-foreground/55">
+        <strong class="text-foreground">A miss is an answer, not a failure.</strong> The exit
+        codes survive the trip: 0 and 1 both come back as ordinary results, so a miss, a timeout, or
+        an over-tolerance diff arrives with <code class="font-mono">ok: false</code> and no
+        error flag. Only a malformed question is an error. Backwards, every negative answer looks
+        like a broken tool and the model retries instead of reacting.
+      </p>
+      <p class="max-w-2xl text-sm leading-7 text-foreground/70 dark:text-foreground/55">
+        <strong class="text-foreground">It is read-only.</strong> No tool opens the overlay,
+        renames a session, or edits one — marking regions is something a human does. The shape is
+        mark once, run many. Asking a marked session where to click reads a file and needs no
+        screen-recording permission; the tools that do capture say so in their own descriptions.{' '}
+        <a
+          class="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+          href={`${DOCS_BASE_URL}/CLI.md`}
+        >
+          Full reference
+        </a>
+        .
+      </p>
+    </section>

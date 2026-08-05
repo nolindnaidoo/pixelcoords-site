@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* Tailwind v4 auto-detects sources, and it did not find the .astro files —
+   the build emitted preflight and these hand-written rules with not one
+   utility class in it. Declared explicitly so the scan cannot silently miss
+   the only place classes are written. */
+@source "../**/*.astro";
+@source "../**/*.ts";
+
+/* Brand theme tokens — overrides of the @heroui/styles semantic variables,
+ * unlayered so they beat HeroUI's @layer'd definitions regardless of import
+ * order. next-themes toggles `.light`/`.dark` on <html> (system-driven, no
+ * toggle UI); @heroui/styles keys its token blocks on those classes.
+ *
+ * Vocabulary the site styles against:
+ *   bg-background      page canvas
+ *   bg-surface         raised card / HUD panel
+ *   text-foreground    full-strength text; muted = the alpha ramp
+ *                      (text-foreground/70 dark:text-foreground/55 family)
+ *   text-preview       the tool's preview-outline blue
+ *   text-committed     the tool's committed-outline green
+ *   text-target        the tool's --target window amber
+ *
+ * Dark uses the tool's exact overlay colors; light uses contrast-tuned
+ * variants (each ≥4.5:1 on the light canvas for text use). The -dim washes
+ * are panel backgrounds, same alpha both themes. */
+/* next/font supplied these under generated names; the faces are served from
+   /fonts now, so the stacks are declared here. Geist is not vendored — the
+   body face is the system stack, which costs nothing and renders instantly. */
+:root {
+  --sans-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono-stack: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+:root,
+.light {
+  --background: #fafafa;
+  --surface: #ffffff;
+  --foreground: #171717;
+  --border-token: rgba(0, 0, 0, 0.12);
+  --preview: #005a9e;
+  --committed: #04703f;
+  --target: #8a5d06;
+  --preview-dim: rgba(0, 160, 255, 0.1);
+  --committed-dim: rgba(0, 255, 102, 0.1);
+  --target-dim: rgba(255, 176, 0, 0.12);
+}
+
+.dark {
+  --background: #0a0a0a;
+  --surface: #141414;
+  --foreground: #ededed;
+  --border-token: rgba(255, 255, 255, 0.14);
+  --preview: #00a0ff;
+  --committed: #00ff66;
+  --target: #ffb000;
+  --preview-dim: rgba(0, 160, 255, 0.1);
+  --committed-dim: rgba(0, 255, 102, 0.1);
+  --target-dim: rgba(255, 176, 0, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-border-token: var(--border-token);
+  --color-preview: var(--preview);
+  --color-committed: var(--committed);
+  --color-target: var(--target);
+  --color-preview-dim: var(--preview-dim);
+  --color-committed-dim: var(--committed-dim);
+  --color-target-dim: var(--target-dim);
+  --font-sans: var(--sans-stack);
+  --font-mono: var(--mono-stack);
+}
+
+/* The document never scrolls horizontally; wide content scrolls inside its
+ * own overflow-x-auto wrapper. `clip` (not `hidden`) so html/body don't
+ * become a scroll-port ancestor, which would silently kill position:sticky. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Flex items refuse to shrink below their content's min-width, which lets a
+ * min-w-[640px] table punch through every ancestor and widen the document.
+ * Sections are the flex items in every page layout — let them shrink so the
+ * overflow-x-auto wrappers inside them can actually do their job. */
+section {
+  min-width: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* One focus treatment site-wide (WCAG 2.4.7): the tool's preview blue,
+ * offset so it reads on any background. Per-element focus utilities are
+ * deliberately absent — this rule is the single source. */
+:focus-visible {
+  outline: 2px solid var(--preview);
+  outline-offset: 2px;
+}
+
+/* Keystrokes look like keys, distinct from inline code. */
+kbd {
+  border: 1px solid var(--border-token);
+  border-bottom-width: 2px;
+  border-radius: 0.25rem;
+  background: var(--surface);
+  padding: 0.05rem 0.4rem;
+}
+
+/* The vendored face. Self-hosted rather than pulled from a CDN: a third-party
+   font host is a request the page does not need and a dependency on someone
+   else's uptime, and `font-src 'self'` in the CSP would reject it anyway. */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Windows High Contrast replaces the palette wholesale. The overlay colours
+   are the site's entire visual vocabulary — the selection frame, the coord
+   chips, the comparison table's marks — and every one of them vanishes there
+   unless it opts back in via a system keyword. */
+@media (forced-colors: active) {
+  :root,
+  .light,
+  .dark {
+    --border-token: CanvasText;
+    --preview: LinkText;
+    --committed: CanvasText;
+    --target: CanvasText;
+    --preview-dim: Canvas;
+    --committed-dim: Canvas;
+    --target-dim: Canvas;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/* A global safety net. Motion is also handled per-component — the demo video
+   refuses to autoplay under this preference — but a transition added later
+   should not need to remember. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Someone who has asked for more contrast is not the person to defend the
+   muted alpha ramp to. */
+@media (prefers-contrast: more) {
+  :root,
+  .light {
+    --foreground: #000000;
+    --border-token: rgba(0, 0, 0, 0.55);
+  }
+
+  .dark {
+    --foreground: #ffffff;
+    --border-token: rgba(255, 255, 255, 0.6);
+  }
+}

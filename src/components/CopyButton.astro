@@ -1,0 +1,67 @@
+---
+/**
+ * The copy leaf. Degrades cleanly without JS — the command beside it is always
+ * selectable — and guards the environments where the Clipboard API is absent
+ * (non-secure contexts, older browsers), where property access throws
+ * synchronously before any promise exists to catch.
+ *
+ * One delegated listener serves every instance on the page: Astro hoists and
+ * dedupes component scripts, so a per-instance handler would be wrong as well
+ * as wasteful.
+ */
+type Props = { readonly text: string }
+
+const { text } = Astro.props
+---
+
+<button
+  type="button"
+  data-copy={text}
+  class="min-h-11 rounded border border-border-token px-3 font-mono text-xs text-foreground/70 hover:bg-surface dark:text-foreground/55"
+>
+  <span data-copy-label>copy</span>
+  <span class="sr-only"> {text} to clipboard</span>
+  <span role="status" class="sr-only" data-copy-status></span>
+</button>
+
+<script>
+  import { reportError } from '@/lib/error'
+
+  const RESET_AFTER_MS = 1500
+  const timers = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>()
+
+  function announce(button: HTMLElement, copied: boolean): void {
+    const label = button.querySelector<HTMLElement>('[data-copy-label]')
+    const status = button.querySelector<HTMLElement>('[data-copy-status]')
+    if (label !== null) label.textContent = copied ? 'copied' : 'copy'
+    if (status !== null) status.textContent = copied ? 'Copied to clipboard' : ''
+  }
+
+  document.addEventListener('click', event => {
+    const target = event.target
+    if (!(target instanceof Element)) return
+
+    const button = target.closest<HTMLButtonElement>('[data-copy]')
+    if (button === null) return
+
+    const text = button.dataset.copy
+    if (text === undefined) return
+
+    if (navigator.clipboard === undefined) {
+      reportError(new Error('Clipboard API unavailable'), { source: 'copy-button.unsupported' })
+      return
+    }
+
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        announce(button, true)
+        clearTimeout(timers.get(button))
+        timers.set(
+          button,
+          setTimeout(() => announce(button, false), RESET_AFTER_MS),
+        )
+      })
+      .catch(error => reportError(error, { source: 'copy-button.write' }))
+  })
+</script>

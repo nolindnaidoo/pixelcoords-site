@@ -1,0 +1,135 @@
+---
+import CodeBlock from '@/components/CodeBlock.astro'
+import ComparisonTable from '@/components/ComparisonTable.astro'
+import CoordChip from '@/components/CoordChip.astro'
+import InstallBlock from '@/components/InstallBlock.astro'
+import JsonLd from '@/components/JsonLd.astro'
+import { COMPETITORS } from '@/content/competitors'
+import {
+  COMPANION_URL,
+  CRATES_URL,
+  GITHUB_URL,
+  RELEASES_URL,
+  SITE_URL,
+  TAGLINE,
+  TOOL_VERSION,
+} from '@/content/site'
+import FeatureLoop from '@/features/home/FeatureLoop.astro'
+import Hero from '@/features/home/Hero.astro'
+import McpServer from '@/features/home/McpServer.astro'
+import NonGoals from '@/features/home/NonGoals.astro'
+import PlatformTable from '@/features/home/PlatformTable.astro'
+import Layout from '@/layouts/Layout.astro'
+
+const SIXTY_SECONDS = `pixelcoords                      # screen freezes; drag shapes, A labels, S saves
+# → Downloads/pixelcoords-captures/<timestamp>/
+#   session.json  screenshot-0.png  cutout-primary-0.png  cutout-inverse-0.png  crop-0-submit.png
+
+pixelcoords assert --session <dir> --point 812,440 --expect submit
+# exit 0: that point is inside the region you labeled "submit"
+# --stdin scores a whole trajectory in one process, one point per line
+
+pixelcoords resolve --session <dir> --label submit --units auto
+# where to click, right now, in the units your input API actually wants
+
+pixelcoords emit --session <dir> --format pyautogui
+# ready-to-paste click code, coordinate conventions already handled
+
+pixelcoords wait --session <dir> --label dialog --for match
+# block until that region is back on screen; exit 1 if it never arrives
+
+pixelcoords diff --session <dir> --against baseline/
+# did those regions still look right? visual regression, per region
+
+pixelcoords find --session <dir>
+# the UI moved? every region re-located by its saved crop, deltas included
+
+pixelcoords mcp                   # serve all of the above to an LLM over stdio
+# read-only: it asks about sessions you marked, it cannot make one
+
+pixelcoords resume                # pick any saved session, keep editing it`
+
+const SAVE_TREE = `pixelcoords-captures/20260728-182121-117/
+├── session.json              # versioned schema: three coordinate spaces, DPI scale
+├── screenshot-0.png          # one full frozen capture per monitor
+├── cutout-primary-0.png      # the frame with only the selections visible
+├── cutout-inverse-0.png      # the exact complement: selections punched out
+└── crop-0-submit.png         # one labeled crop per selection`
+
+const SOFTWARE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'pixelcoords',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS, Windows, Linux',
+  softwareVersion: TOOL_VERSION,
+  description: TAGLINE,
+  license: 'https://opensource.org/license/mit/',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Person', name: 'nolindnaidoo', url: 'https://github.com/nolindnaidoo' },
+  url: SITE_URL,
+  downloadUrl: RELEASES_URL,
+  sameAs: [GITHUB_URL, CRATES_URL],
+}
+---
+
+<Layout path="/">
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-16 px-6 py-12 sm:py-16">
+      <Hero />
+      <section class="flex flex-col gap-4">
+        <h2 class="flex items-center gap-3 text-2xl font-semibold">
+          <CoordChip ariaHidden tone="preview">
+            60s
+          </CoordChip>
+          Sixty seconds
+        </h2>
+        <CodeBlock ariaLabel="Sixty-second tour">{SIXTY_SECONDS}</CodeBlock>
+      </section>
+      <FeatureLoop />
+      <McpServer />
+      <section class="flex flex-col gap-4">
+        <h2 class="flex items-center gap-3 text-2xl font-semibold">
+          <CoordChip ariaHidden tone="preview">
+            outputs
+          </CoordChip>
+          What a save writes
+        </h2>
+        <CodeBlock ariaLabel="Files a save writes">{SAVE_TREE}</CodeBlock>
+        <p class="max-w-2xl text-sm text-foreground/70 dark:text-foreground/55">
+          Crops isolate each region; the cutout pair keeps every region in place on transparency —
+          together they reassemble the screenshot. Files pixelcoords didn&apos;t write are never
+          touched.
+        </p>
+      </section>
+      <section class="flex flex-col gap-4">
+        <h2 class="flex items-center gap-3 text-2xl font-semibold">
+          <CoordChip ariaHidden tone="preview">
+            comparison
+          </CoordChip>
+          Where it stands
+        </h2>
+        <ComparisonTable competitors={COMPETITORS} linkCompetitors />
+      </section>
+      <NonGoals />
+      <PlatformTable />
+      <div class="flex flex-col gap-4">
+        <InstallBlock variant="full" />
+        <p class="max-w-2xl">
+          No account, no network, no toolkit — one small native binary for macOS, Windows, and
+          Linux. MIT-licensed, because the aim was to build the best tool in this category and give
+          it away.
+        </p>
+        <p class="max-w-2xl text-sm text-foreground/70 dark:text-foreground/55">
+          The loop has an executor half:{' '}
+          <a
+            class="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+            href={COMPANION_URL}
+          >
+            pixelactions
+          </a>{' '}
+          consumes these sessions — click, type, verify, by label. Early, and macOS only.
+        </p>
+      </div>
+      <JsonLd data={SOFTWARE_JSON_LD} />
+    </div>
+</Layout>

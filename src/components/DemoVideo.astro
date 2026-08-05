@@ -1,0 +1,94 @@
+---
+/**
+ * The 30-second demo loop, WCAG-conformant:
+ *
+ * - no `autoplay` attribute — playback starts on load ONLY when the visitor
+ *   has no reduced-motion preference (2.2.2, motion from interaction)
+ * - a real pause/play control is always present
+ * - a <details> transcript provides the text alternative (1.2.1)
+ *
+ * Explicit dimensions keep CLS at zero; the poster is the LCP element, which
+ * is why it is preloaded from the document head rather than discovered late.
+ */
+type Props = { readonly class?: string }
+
+const { class: className } = Astro.props
+---
+
+<div class="flex flex-col">
+  <div class="relative">
+    <video
+      data-demo-video
+      class={className}
+      poster="/demo-poster.webp"
+      width="1200"
+      height="868"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-label="30-second demo: freeze a window, mark shapes, save machine-readable coordinates"
+    >
+      <source src="/demo.mp4" type="video/mp4" />
+      Thirty seconds of pixelcoords: freeze a window, mark shapes, save machine-readable coordinates.
+    </video>
+    <button
+      type="button"
+      data-demo-toggle
+      class="absolute bottom-3 right-3 flex h-11 min-w-11 items-center justify-center rounded border border-border-token bg-background/90 px-3 font-mono text-xs"
+    >
+      <span data-demo-label>play</span>
+      <span class="sr-only"> demo video</span>
+    </button>
+  </div>
+  <details class="mt-2 text-sm text-foreground/70 dark:text-foreground/55">
+    <summary class="cursor-pointer font-mono text-xs">What happens in this demo</summary>
+    <p class="pt-2 leading-6">
+      A private browser window on the Google homepage is frozen by pixelcoords with an amber outline
+      marking the targeted window. Four shapes are drawn over the page — a rectangle, an ellipse, a
+      triangle, and a hexagon — in committed green, then a freehand region in preview blue with the
+      live coordinate chip showing its position and size. The control panel lists every key. The
+      session is saved, and the demo ends on the resulting session.json open in a browser: schema,
+      monitors, target window, and one record per marked selection.
+    </p>
+  </details>
+</div>
+
+<script>
+  import { reportError } from '@/lib/error'
+
+  const video = document.querySelector<HTMLVideoElement>('[data-demo-video]')
+  const toggle = document.querySelector<HTMLButtonElement>('[data-demo-toggle]')
+  const label = toggle?.querySelector<HTMLElement>('[data-demo-label]')
+
+  function setLabel(playing: boolean): void {
+    if (label !== null && label !== undefined) label.textContent = playing ? 'pause' : 'play'
+  }
+
+  if (video !== null && toggle !== null) {
+    // Autoplay is opt-out by preference, never by attribute — the attribute
+    // would play before the query could be read.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video
+        .play()
+        .then(() => setLabel(true))
+        .catch(error => reportError(error, { source: 'demo-video.autoplay' }))
+    }
+
+    toggle.addEventListener('click', () => {
+      if (!video.paused) {
+        video.pause()
+        setLabel(false)
+        return
+      }
+      video
+        .play()
+        .then(() => setLabel(true))
+        .catch(error => reportError(error, { source: 'demo-video.play' }))
+    })
+
+    // The element can also stop for reasons the button did not cause.
+    video.addEventListener('pause', () => setLabel(false))
+    video.addEventListener('play', () => setLabel(true))
+  }
+</script>

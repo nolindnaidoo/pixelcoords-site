@@ -1,0 +1,19 @@
+---
+import CoordChip from '@/components/CoordChip.astro'
+
+/**
+ * One operating system's answer. Its own file because Astro has no inline
+ * component form — in React this was a local function in the page module.
+ */
+type Props = { readonly chip: string; readonly title: string }
+
+const { chip, title } = Astro.props
+---
+
+<section class="flex flex-col gap-4">
+  <h2 class="flex items-center gap-3 text-2xl font-semibold">
+    <CoordChip ariaHidden tone="preview">{chip}</CoordChip>
+    {title}
+  </h2>
+  <slot />
+</section>

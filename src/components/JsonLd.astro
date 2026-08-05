@@ -1,0 +1,11 @@
+---
+/**
+ * Structured data. JSON.stringify output is safe in a script tag as long as
+ * the data carries no user input — everything here is authored constants.
+ */
+type Props = { readonly data: Record<string, unknown> }
+
+const { data } = Astro.props
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(data)} />

@@ -1,0 +1,49 @@
+---
+/**
+ * The tool's selection rectangle as a wrapper: dashed outline, four solid
+ * corner handles, optional label chip riding the top border — exactly how the
+ * overlay renders a labeled region. Decorative; the handles are aria-hidden.
+ */
+type Tone = 'preview' | 'committed' | 'target'
+
+type Props = {
+  readonly label?: string
+  readonly tone?: Tone
+  readonly class?: string
+}
+
+const TONES: Record<Tone, { root: string; handle: string; label: string }> = {
+  preview: { root: 'border-preview', handle: 'bg-preview', label: 'bg-background text-preview' },
+  committed: {
+    root: 'border-committed',
+    handle: 'bg-committed',
+    label: 'bg-background text-committed',
+  },
+  target: { root: 'border-target', handle: 'bg-target', label: 'bg-background text-target' },
+}
+
+const CORNERS = [
+  'top-[-4px] left-[-4px]',
+  'top-[-4px] right-[-4px]',
+  'bottom-[-4px] left-[-4px]',
+  'bottom-[-4px] right-[-4px]',
+] as const
+
+const { label, tone = 'preview', class: className } = Astro.props
+const styles = TONES[tone]
+---
+
+<div class:list={['relative border-[1.5px] border-dashed', styles.root, className]}>
+  {CORNERS.map(position => <span aria-hidden="true" class:list={['absolute h-[7px] w-[7px]', styles.handle, position]} />)}
+  {
+    label === undefined ? null : (
+      <span
+        aria-hidden="true"
+        class:list={['absolute -top-2.5 left-3 px-1.5 font-mono text-xs leading-5', styles.label]}
+      >
+        {label}
+      </span>
+    )
+  }
+  <slot />
+</div>

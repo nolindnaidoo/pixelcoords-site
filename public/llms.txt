@@ -1,0 +1,42 @@
+# pixelcoords
+
+> Free, MIT-licensed screen-coordinate tool for macOS, Windows, and Linux.
+> It freezes your screen, lets you mark regions with five shape tools
+> (rectangle, ellipse, triangle, N-gon, freehand), and outputs
+> machine-usable data: versioned session.json (physical-pixel coordinates
+> in three spaces with per-monitor DPI scale), labeled PNG crops, cutout
+> pairs, ready-to-paste click code (pyautogui, cliclick, xdotool), point
+> verification with exit codes (`assert`), template-based re-location
+> after UI drift (`find`), and editable saved sessions (`resume`).
+> The thesis: the real consumer of a coordinate is a machine.
+
+Install: `cargo install pixelcoords`, or prebuilt binaries from
+https://github.com/nolindnaidoo/pixelcoords/releases
+
+## Docs
+
+- [CLI reference](https://github.com/nolindnaidoo/pixelcoords/blob/main/docs/CLI.md):
+  every command, flag, control, and exit code
+- [Output schema](https://github.com/nolindnaidoo/pixelcoords/blob/main/docs/OUTPUT.md):
+  session.json, crops, cutouts, assert/emit/find documents
+- [Configuration](https://github.com/nolindnaidoo/pixelcoords/blob/main/docs/CONFIGURATION.md)
+- [Troubleshooting](https://github.com/nolindnaidoo/pixelcoords/blob/main/docs/TROUBLESHOOTING.md)
+
+## Pages
+
+- [Home](https://pixelcoords.dev/): the demo, the sixty-second tour, the loop
+- [vs PowerToys Screen Ruler](https://pixelcoords.dev/vs/powertoys-screen-ruler)
+- [vs PixelSnap](https://pixelcoords.dev/vs/pixelsnap)
+- [vs SikuliX](https://pixelcoords.dev/vs/sikulix)
+- [How to get pixel coordinates](https://pixelcoords.dev/how-to/pixel-coordinates):
+  built-in methods per OS, the physical-vs-logical DPI trap, machine-readable output
+
+Non-goals (settled): OCR, live measurement, annotation, recording, cloud.
+Companion tool: pixelactions (https://pixelactions.dev) executes these
+sessions — click, type, drag, verify, by label. Early, and macOS only.
+Crates: pixelcoords (the binary) + pixelcoords-core
+(https://crates.io/crates/pixelcoords-core — platform-free core:
+geometry, selections, session schema, template relocation).
+Source: https://github.com/nolindnaidoo/pixelcoords · crates.io:
+https://crates.io/crates/pixelcoords · Author: nolindnaidoo
+(https://github.com/nolindnaidoo)

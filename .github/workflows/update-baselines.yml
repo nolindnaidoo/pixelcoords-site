@@ -1,0 +1,50 @@
+name: Update visual baselines
+
+# Playwright suffixes screenshot baselines by platform, so the macOS set
+# generated locally cannot satisfy a Linux runner. This regenerates the Linux
+# baselines on the runner itself and commits them.
+#
+# Run it once after adding or changing a visual test, then let CI enforce them.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bunx playwright install chromium --with-deps
+
+      - name: Regenerate baselines
+        run: bun run e2e -- --update-snapshots
+
+      - name: Commit any change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage first, then compare the index. `git diff` alone ignores
+          # untracked files, and a brand-new platform's baselines are all
+          # untracked — so the first run of this workflow, the one that matters,
+          # reported "nothing to commit" and exited 0 having written 22 files.
+          git add e2e
+
+          if git diff --cached --quiet -- e2e; then
+            echo "Baselines already match this platform; nothing to commit."
+            exit 0
+          fi
+
+          echo "Committing $(git diff --cached --name-only -- e2e | wc -l) baseline file(s)."
+          git commit -m "test: regenerate visual baselines for linux"
+          git push

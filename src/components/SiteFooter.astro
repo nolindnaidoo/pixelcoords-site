@@ -1,0 +1,79 @@
+---
+import { SITE_PAGES } from '@/content/pages'
+import {
+  AUTHOR_URL,
+  COMPANION_CORE_URL,
+  COMPANION_URL,
+  CORE_URL,
+  CRATES_URL,
+  DOCS_BASE_URL,
+  GITHUB_URL,
+  LETOOLS_URL,
+} from '@/content/site'
+
+const SITE_LINKS = SITE_PAGES.filter(page => page.path !== '/')
+
+const DOC_LINKS = [
+  { label: 'CLI reference', href: `${DOCS_BASE_URL}/CLI.md` },
+  { label: 'Output schema', href: `${DOCS_BASE_URL}/OUTPUT.md` },
+  { label: 'Configuration', href: `${DOCS_BASE_URL}/CONFIGURATION.md` },
+  { label: 'Troubleshooting', href: `${DOCS_BASE_URL}/TROUBLESHOOTING.md` },
+  { label: 'Performance', href: `${DOCS_BASE_URL}/PERFORMANCE.md` },
+] as const
+
+// The whole family, findable from every page: the companion tool's site
+// and both platform-free cores.
+const FAMILY_LINKS = [
+  { label: 'pixelactions.dev', href: COMPANION_URL },
+  { label: 'pixelcoords-core', href: CORE_URL },
+  { label: 'pixelactions-core', href: COMPANION_CORE_URL },
+  { label: 'letools.dev', href: LETOOLS_URL },
+] as const
+---
+
+<footer class="border-t border-border-token">
+  <div
+    class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-8 text-sm text-foreground/70 dark:text-foreground/55"
+  >
+    <nav aria-label="Compare" class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs">
+      {
+        SITE_LINKS.map(page => (
+          <a class="py-2 hover:text-foreground" href={page.path}>
+            {page.navLabel}
+          </a>
+        ))
+      }
+    </nav>
+    <nav aria-label="Footer" class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs">
+      <a class="py-2 hover:text-foreground" href={GITHUB_URL}>GitHub</a>
+      <a class="py-2 hover:text-foreground" href={CRATES_URL}>crates.io</a>
+      {
+        DOC_LINKS.map(link => (
+          <a class="py-2 hover:text-foreground" href={link.href}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <nav aria-label="The loop" class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs">
+      {
+        FAMILY_LINKS.map(link => (
+          <a class="py-2 hover:text-foreground" href={link.href}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <p class="font-mono text-xs">
+      MIT licensed. Claims match runs. Built by{' '}
+      <a
+        class="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+        href={AUTHOR_URL}>Nolin Naidoo</a
+      >{' '}
+      <a
+        class="underline decoration-border-token underline-offset-4 hover:decoration-foreground"
+        href="https://github.com/nolindnaidoo">(nolindnaidoo)</a
+      >.
+    </p>
+  </div>
+</footer>

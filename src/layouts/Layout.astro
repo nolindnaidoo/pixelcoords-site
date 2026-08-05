@@ -1,0 +1,112 @@
+---
+import SiteFooter from '@/components/SiteFooter.astro'
+import SiteHeader from '@/components/SiteHeader.astro'
+import { pageHead } from '@/content/pages'
+import { THEME_COLORS } from '@/content/site'
+import '@/styles/global.css'
+
+type Props = { readonly path: string }
+
+const { path } = Astro.props
+const head = pageHead(path)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{head.title}</title>
+    <meta name="description" content={head.description} />
+    <link rel="canonical" href={head.canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="pixelcoords" />
+    <meta property="og:title" content={head.ogTitle} />
+    <meta property="og:description" content={head.description} />
+    <meta property="og:url" content={head.ogUrl} />
+    <meta property="og:image" content={head.ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${head.ogKicker} — ${head.ogTitle}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={head.ogTitle} />
+    <meta name="twitter:description" content={head.description} />
+    <meta name="twitter:image" content={head.ogImage} />
+
+    <meta name="theme-color" content={THEME_COLORS.light} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={THEME_COLORS.dark} media="(prefers-color-scheme: dark)" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <link
+      rel="preload"
+      href="/fonts/JetBrainsMono-Regular.subset.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+
+    {/*
+      Blocking and inline on purpose: it has to set the class before first
+      paint or the page flashes the wrong canvas. An external file would be
+      fetched too late, and next-themes solved the same problem the same way.
+
+      Astro hashes this into the CSP, which is what lets script-src stay free
+      of 'unsafe-inline'. Keep it dependency-free and keep it small — every
+      byte here is render-blocking.
+    */}
+    <script is:inline>
+      ;(() => {
+        try {
+          const stored = localStorage.getItem('theme')
+          const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          document.documentElement.classList.add(stored === 'light' || stored === 'dark' ? stored : system)
+        } catch {
+          // Private mode can throw on localStorage. A missing class is a
+          // readable page in the light palette, not a broken one.
+          document.documentElement.classList.add('light')
+        }
+      })()
+    </script>
+  </head>
+
+  <body class="bg-background text-foreground font-sans antialiased">
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <SiteHeader />
+    {/*
+      tabindex="-1" makes this a real focus target. Without it the skip link
+      moves the scroll position but not focus in several browsers, so the next
+      Tab returns to the top and the link accomplishes nothing.
+    */}
+    <main id="main-content" tabindex="-1" class="focus:outline-none">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100%;
+    z-index: 50;
+    padding: 0.75rem 1.125rem;
+    background: var(--preview);
+    color: var(--background);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: top 140ms ease;
+  }
+
+  .skip-link:focus-visible {
+    top: 0.75rem;
+  }
+</style>

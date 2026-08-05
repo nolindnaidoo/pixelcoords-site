@@ -1,0 +1,98 @@
+---
+import CoordChip from '@/components/CoordChip.astro'
+import JsonLd from '@/components/JsonLd.astro'
+
+// The FAQ answers mirrored into FAQPage JSON-LD (Google requires the visible
+// text to correspond). Each question carries a slug id so rich-result
+// visitors can deep-link.
+export const FAQ = [
+  {
+    question: 'Why don’t my screenshot coordinates match my click coordinates on a Retina display?',
+    answer:
+      'HiDPI screens have two coordinate systems: physical pixels (the screenshot’s grid) and logical points (what most click APIs use on macOS). On a 2× Retina display a screenshot pixel at (1624, 880) is the logical point (812, 440). Divide by the display’s scale factor — or use a tool that records the scale per monitor and converts for you.',
+  },
+  {
+    question: 'How do I get the pixel coordinates of my mouse on macOS?',
+    answer:
+      'Press Cmd+Shift+4 — the screenshot crosshair shows live cursor coordinates in logical points; press Esc to cancel without capturing. For coordinates you can save, verify, and hand to a script, freeze the screen with pixelcoords and mark the spot.',
+  },
+  {
+    question: 'How do I get screen pixel coordinates on Wayland?',
+    answer:
+      'Wayland’s security design withholds global coordinates and window geometry from applications, so live trackers can’t work. A frozen-snapshot overlay is the model Wayland permits: pixelcoords freezes via the desktop portal, and --pick marks a single window with window-relative coordinates.',
+  },
+  {
+    question: 'How do I get coordinates in the right format for pyautogui?',
+    answer:
+      'pyautogui speaks logical points on macOS and physical pixels on Windows and X11. pixelcoords emit --format pyautogui applies the right convention per monitor from the recorded DPI scale. The Windows pyautogui convention follows its documented behavior and has not yet been verified on hardware.',
+  },
+  {
+    question: 'How can a script verify a point is inside a screen region?',
+    answer:
+      'Mark the region once, then run pixelcoords assert --session <dir> --point X,Y --expect name. The exit code is the API: 0 hit, 1 miss, 2 malformed question — CI and computer-use agents can gate on it. To score a whole run, --stdin reads one point per line and answers in a single process.',
+  },
+  {
+    question: 'How do I get the coordinate my automation tool actually wants?',
+    answer:
+      'pixelcoords resolve --label name --units auto returns the click point in the space your input API expects: logical points on macOS, physical pixels on Windows and X11. Each region converts through its own monitor’s DPI scale, so a mixed-DPI desktop comes out right without the caller knowing it was mixed.',
+  },
+  {
+    question: 'Can a script wait for a dialog to appear before clicking?',
+    answer:
+      'pixelcoords wait --label dialog --for match blocks until that region matches its saved crop again, and --for change blocks until one stops matching. It exits 0 when the condition holds and 1 on timeout, so a script can tell "it never appeared" from "the question was malformed". Two honest limits: matching is contrast-normalized, so --for change cannot see a region that dims uniformly behind a modal, and a blinking cursor inside a watched region is enough to trip it on its own — lower --min-score when that happens.',
+  },
+  {
+    question: 'Can an LLM or AI agent use it directly, without shelling out?',
+    answer:
+      'pixelcoords mcp serves the same commands over the Model Context Protocol on stdio — point an MCP client at the binary and the model gets six read-only tools: list sessions, resolve a click point, assert a point, wait, find, diff. Asking a marked session where to click reads a file and sends no image at all, where the alternative is a screenshot per step. It cannot mark regions — a human does that once in the overlay, and the model asks about it from then on. A miss or a timeout comes back as an ordinary result with ok false, not as an error, so the model reacts to it instead of retrying.',
+  },
+  {
+    question: 'Can I use it for visual regression testing?',
+    answer:
+      'pixelcoords diff compares each marked region against the screen now, or against stored screenshots with --against, and reports how many of that region’s pixels changed. It is scoped to the regions you marked rather than whole screenshots, so a clock in the corner is not a failure, and shaped selections compare by their true silhouette. --tolerance defaults to exact: anti-aliasing usually means CI wants a small nonzero value, but a diff tool that rounds by default is lying by default.',
+  },
+] as const
+
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map(entry => ({
+    '@type': 'Question',
+    name: entry.question,
+    acceptedAnswer: { '@type': 'Answer', text: entry.answer },
+  })),
+}
+
+function slugify(question: string): string {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 60)
+}
+---
+
+<section class="flex flex-col gap-4">
+      <h2 class="flex items-center gap-3 text-2xl font-semibold">
+        <CoordChip ariaHidden tone="preview">
+          faq
+        </CoordChip>
+        Questions people actually ask
+      </h2>
+      <div class="flex flex-col gap-2">
+        {FAQ.map(entry => (
+          <details
+            id={slugify(entry.question)}
+            class="group scroll-mt-8 rounded-lg border border-border-token bg-surface p-4"
+          >
+            <summary class="cursor-pointer py-1 font-semibold marker:text-preview">
+              {entry.question}
+            </summary>
+            <p class="pt-3 leading-7 text-foreground/70 dark:text-foreground/55">
+              {entry.answer}
+            </p>
+          </details>
+        ))}
+      </div>
+      <JsonLd data={FAQ_JSON_LD} />
+    </section>
