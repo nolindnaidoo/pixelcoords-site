@@ -15,7 +15,8 @@
       "!coverage",
       "!test-results",
       "!playwright-report",
-      "!public"
+      "!public",
+      "!vercel.json"
     ]
   },
   "assist": {
