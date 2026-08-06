@@ -200,9 +200,10 @@ bun run verify
 
 Chains lint → typecheck → coverage → build → payload budget → content drift →
 e2e. CI (`.github/workflows/ci.yml`) runs the same steps individually so a
-failure names itself in the job list, plus warn-level Lighthouse budgets
-(`lighthouserc.json`), which need a Chrome the CI runner provides and a local
-machine generally does not.
+failure names itself in the job list. It also runs warn-level Lighthouse
+budgets (`lighthouserc.json`), which are CI-only: they need a Chrome the runner
+provides and a dev machine generally does not, which is why `bun run lighthouse`
+is outside the local `verify` chain.
 
 - **Coverage** is enforced at 100 statements/functions/lines and 97 branches
   over `src/content`, `src/lib`, **`src/pages/*.ts`** and `scripts`. `.astro`

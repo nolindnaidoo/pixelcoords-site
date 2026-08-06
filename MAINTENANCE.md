@@ -92,9 +92,11 @@ judged on whether they answer a real question, not on a slot count.
 - Dependabot opens weekly grouped PRs; CI runs on them. Merge by hand when
   green — no auto-merge here by design (no required checks; push-to-main
   is the deploy).
-- **Bun itself is pinned** in `.bun-version` (CI parity). Bumping it is
-  deliberate: update the file, run the full gate locally on the same
-  version, push.
+- **Bun itself is pinned** in `.bun-version`, and every workflow installs it
+  with `bun-version-file` rather than `latest` — otherwise the pin describes
+  local runs only and a Bun release can break CI with no change in the repo.
+  Bumping it is deliberate: update the file, run the full gate locally on the
+  same version, push.
 - **TypeScript is pinned to 6.x** — `astro check` needs an API TypeScript 7's
   native compiler does not expose yet. Dependabot will offer 7; decline it
   until `@astrojs/check` supports it.
