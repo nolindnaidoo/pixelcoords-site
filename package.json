@@ -20,7 +20,8 @@
     "verify": "bun run lint && bun run typecheck && bun run test:coverage && bun run build && bun run routes && bun run budget && bun run verify:content && bun run e2e",
     "lighthouse": "lhci autorun",
     "snapshots": "playwright test e2e/visual.e2e.ts --update-snapshots",
-    "routes": "bun scripts/check-routes.ts"
+    "routes": "bun scripts/check-routes.ts",
+    "verify:deploy": "bun run lint && bun run typecheck && bun run test:coverage && bun run build && bun run routes && bun run budget"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
