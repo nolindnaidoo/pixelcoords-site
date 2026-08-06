@@ -1,17 +1,29 @@
 ---
 import ThemeToggle from '@/components/ThemeToggle.astro'
-import { CRATES_URL, GITHUB_URL } from '@/content/site'
+import { COMPANION_URL, CRATES_URL, GITHUB_URL } from '@/content/site'
 
 // #install is same-page: every content page renders its own install section,
 // so the link never navigates away. flex-wrap + tight gaps keep the row
 // inside a 320px viewport (overflow there would be clipped, not scrollable).
+//
+// The pixelactions aside is the loop's other half, offered to anyone who
+// landed on the wrong one of the two. It sits outside the wordmark link — a
+// second destination inside the home link would be one link with two targets.
 ---
 
 <header class="border-b border-border-token">
   <div
     class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-0 px-4 py-2 sm:px-6"
   >
-    <a href="/" class="py-2 font-mono text-sm font-semibold">pixelcoords</a>
+    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0">
+      <a href="/" class="py-2 font-mono text-sm font-semibold">pixelcoords</a>
+      <p class="py-2 font-mono text-xs text-foreground/70 dark:text-foreground/55">
+        <span aria-hidden="true">|</span> looking for <a
+          class="underline decoration-border-token underline-offset-4 hover:text-foreground hover:decoration-foreground"
+          href={COMPANION_URL}>pixelactions</a
+        >?
+      </p>
+    </div>
     <nav
       aria-label="Primary"
       class="flex flex-wrap items-center gap-x-3 font-mono text-sm text-foreground/70 dark:text-foreground/55"

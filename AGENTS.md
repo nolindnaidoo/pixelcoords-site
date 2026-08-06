@@ -232,7 +232,12 @@ machine generally does not.
   against the live crates.io release, because that number is hand-typed and
   nothing else notices when it goes stale.
 - **Visual baselines** are platform-suffixed: macOS generated locally, Linux
-  on the CI runner via the update-baselines workflow. The video is masked.
+  on the CI runner via the update-baselines workflow. The video is masked, and
+  the tolerance is an absolute `maxDiffPixels`, never a ratio — a ratio scales
+  the allowance with the element, so a wide motif earns a budget big enough to
+  hide a whole added line of text. That is not hypothetical: at
+  `maxDiffPixelRatio: 0.02` the desktop header could differ by 1,561 pixels and
+  the pixelactions aside landed under it, passing a change anyone can see.
 
 - **Declared assets** — an e2e gate fetches every `<link rel=*icon*>` and every
   icon in the manifest and asserts it resolves. `apple-touch-icon.png` was

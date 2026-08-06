@@ -41,7 +41,17 @@ for (const motif of MOTIFS) {
         `${motif.name}-${scheme}.png`,
         {
           mask: [page.locator('video')],
-          maxDiffPixelRatio: 0.02,
+          // An absolute budget, not a ratio. A ratio scales the tolerance with
+          // the element, so a wide mostly-empty motif earns a huge allowance:
+          // at 0.02 the 1280x61 header could differ by 1,561 pixels, and a
+          // whole line of added text came in under that. The desktop baseline
+          // passed a change anyone can see, and only the smaller mobile
+          // viewport caught it.
+          //
+          // Baselines are platform-suffixed and generated on the platform that
+          // compares them, so the only legitimate difference is antialiasing
+          // jitter — worth a small fixed budget, never a proportional one.
+          maxDiffPixels: 120,
         },
       )
     })
