@@ -258,6 +258,21 @@ After `build`, `dist/` must contain the page HTML, `robots.txt`,
 tested, linted, honest, and documented where behavior changed (README /
 this file).
 
+## Git identity
+
+Every commit uses the GitHub noreply address:
+
+```
+13629544+nolindnaidoo@users.noreply.github.com
+```
+
+A real address in commit metadata is public forever — GitHub's API serves it
+for any public repo, and scrapers harvest it. Never set a real address in
+`user.email`, globally or repo-locally, and never commit with one. GitHub's
+*Block command line pushes that expose my email* is the backstop; the global
+config is the default. A repo-local `user.email` silently overrides the global
+one, so check `git config user.email` in a fresh clone before the first commit.
+
 ## Commits
 
 This repo pushes straight to `main` — it deploys on push, and branches
