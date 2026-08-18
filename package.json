@@ -25,14 +25,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@axe-core/playwright": "^4.12.1",
-    "@biomejs/biome": "^2.5.7",
+    "@axe-core/playwright": "^4.13.0",
+    "@biomejs/biome": "^2.5.8",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",
-    "astro": "^7.1.6",
+    "astro": "^7.2.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6",
     "vitest": "^4.1.10"
