@@ -1,7 +1,7 @@
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
 
 /**
@@ -13,7 +13,7 @@ import { afterAll, describe, expect, it } from 'vitest'
  * Exit codes: 0 accepted, 1 rejected, 2 misused.
  */
 
-const SCRIPT = 'scripts/commit-lint.js'
+const SCRIPT = resolve('scripts/commit-lint.js')
 const scratch = mkdtempSync(join(tmpdir(), 'commit-lint-'))
 
 afterAll(() => rmSync(scratch, { recursive: true, force: true }))
@@ -24,8 +24,8 @@ afterAll(() => rmSync(scratch, { recursive: true, force: true }))
  * spawnSync rather than execFileSync: the unreachable-base path exits 0 *and*
  * writes a warning, and execFileSync only surfaces stderr when it throws.
  */
-function run(args: readonly string[]): { code: number; stderr: string } {
-  const result = spawnSync('node', [SCRIPT, ...args], { encoding: 'utf8' })
+function run(args: readonly string[], cwd?: string): { code: number; stderr: string } {
+  const result = spawnSync('node', [SCRIPT, ...args], { encoding: 'utf8', cwd })
   return { code: result.status ?? -1, stderr: result.stderr ?? '' }
 }
 
@@ -103,6 +103,59 @@ describe('range mode', () => {
     const result = run(['--range', 'HEAD', 'not-a-real-ref'])
     expect(result.code).toBe(2)
     expect(result.stderr).toContain('could not read commits')
+  })
+})
+
+describe('dependabot subjects', () => {
+  // Grouped updates run past the length limit and Dependabot has no setting to
+  // shorten them, so its commits are exempt from length but not from format.
+  const LONG = 'chore(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates'
+
+  function repoWith(author: string, subject: string): string {
+    const dir = mkdtempSync(join(scratch, 'repo-'))
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: dir, stdio: 'ignore' })
+    git('init', '-q')
+    git(
+      '-c',
+      'user.name=seed',
+      '-c',
+      'user.email=seed@example.invalid',
+      'commit',
+      '-q',
+      '--allow-empty',
+      '-m',
+      'chore: seed',
+    )
+    git(
+      '-c',
+      `user.name=${author}`,
+      '-c',
+      'user.email=bot@example.invalid',
+      'commit',
+      '-q',
+      '--allow-empty',
+      '-m',
+      subject,
+    )
+    return dir
+  }
+
+  it('accepts a long subject Dependabot wrote', () => {
+    expect(run(['--range', 'HEAD~1', 'HEAD'], repoWith('dependabot[bot]', LONG)).code).toBe(0)
+  })
+
+  it('still rejects the same subject from a person', () => {
+    const result = run(['--range', 'HEAD~1', 'HEAD'], repoWith('someone', LONG))
+    expect(result.code).toBe(1)
+    expect(result.stderr).toContain('72 characters or fewer')
+  })
+
+  it('still holds Dependabot to the conventional format', () => {
+    const result = run(
+      ['--range', 'HEAD~1', 'HEAD'],
+      repoWith('dependabot[bot]', 'Bump foo from 1 to 2'),
+    )
+    expect(result.code).toBe(1)
   })
 })
 
