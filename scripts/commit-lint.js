@@ -45,8 +45,15 @@ function isMerge(subject) {
   return subject.startsWith('Merge ')
 }
 
+/**
+ * Dependabot writes its own subjects and cannot be told to shorten them; a
+ * grouped update routinely runs past the limit. Its commits still have to be
+ * conventional, just not short.
+ */
+const LENGTH_EXEMPT_AUTHORS = new Set(['dependabot[bot]'])
+
 /** The problems with one subject line; empty when it is valid. */
-function problems(subject) {
+function problems(subject, author) {
   if (isMerge(subject)) return []
   if (!subject) return ['is empty — a commit needs a subject line']
 
@@ -54,7 +61,7 @@ function problems(subject) {
   if (!SUBJECT.test(subject)) {
     found.push(`must match "type(scope): summary" with type one of ${TYPES.join(', ')}`)
   }
-  if (subject.length > MAX_SUBJECT) {
+  if (subject.length > MAX_SUBJECT && !LENGTH_EXEMPT_AUTHORS.has(author)) {
     found.push(`must be ${MAX_SUBJECT} characters or fewer (is ${subject.length})`)
   }
   if (subject.endsWith('.')) {
@@ -68,14 +75,21 @@ function fail(message) {
   return MISUSED
 }
 
-/** Subject lines for a git revision argument, or an error describing the failure. */
+/** Author and subject for a git revision argument, or an error describing the failure. */
 function subjectsFor(revisions) {
   try {
-    const log = execFileSync('git', ['log', '--format=%s', ...revisions], {
+    const log = execFileSync('git', ['log', '--format=%an%x1f%s', ...revisions], {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     })
-    return { subjects: log.split('\n').filter(Boolean) }
+    const commits = log
+      .split('\n')
+      .filter(Boolean)
+      .map(line => {
+        const [author, subject] = line.split('\x1f')
+        return { author, subject: subject ?? '' }
+      })
+    return { subjects: commits }
   } catch (cause) {
     const detail = cause instanceof Error ? cause.message : String(cause)
     return { error: `could not read commits at ${revisions.join(' ')}: ${detail}` }
@@ -147,7 +161,7 @@ function collect(argv) {
 
   const read = readSubject(argv[0])
   if (read.error) return { error: read.error }
-  return { subjects: [read.subject] }
+  return { subjects: [{ author: undefined, subject: read.subject }] }
 }
 
 function main(argv) {
@@ -158,8 +172,8 @@ function main(argv) {
   if (subjects.length === 0) return OK
 
   let failed = 0
-  for (const subject of subjects) {
-    const found = problems(subject)
+  for (const { author, subject } of subjects) {
+    const found = problems(subject, author)
     if (found.length === 0) continue
     report(subject, found)
     failed += 1
